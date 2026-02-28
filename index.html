@@ -507,8 +507,7 @@
     </div>
 
     <div class="mode-buttons">
-      <button class="btn" onclick="selectMode('challenge')">⚔️ CHALLENGE</button>
-      <button class="btn secondary" onclick="selectMode('practice')">📖 PRACTICE</button>
+      <button class="btn" onclick="show('screen-difficulty')">▶ START / スタート</button>
     </div>
   </div>
 
@@ -604,60 +603,77 @@
 // ===== VOCABULARY =====
 const VOCABULARY = {
   easy: [
-    { en: 'cat', jp: 'ねこ', emoji: '🐱', category: 'animals' },
-    { en: 'dog', jp: 'いぬ', emoji: '🐕', category: 'animals' },
-    { en: 'sun', jp: 'たいよう', emoji: '☀️', category: 'nature' },
-    { en: 'egg', jp: 'たまご', emoji: '🥚', category: 'food' },
-    { en: 'car', jp: 'くるま', emoji: '🚗', category: 'things' },
-    { en: 'hat', jp: 'ぼうし', emoji: '🎩', category: 'things' },
-    { en: 'pen', jp: 'ペン', emoji: '🖊️', category: 'things' },
-    { en: 'cup', jp: 'カップ', emoji: '☕', category: 'things' },
-    { en: 'bed', jp: 'ベッド', emoji: '🛏️', category: 'things' },
-    { en: 'box', jp: 'はこ', emoji: '📦', category: 'things' },
-    { en: 'red', jp: 'あか', emoji: '🔴', category: 'colors' },
-    { en: 'eye', jp: 'め', emoji: '👁️', category: 'body' },
-    { en: 'ear', jp: 'みみ', emoji: '👂', category: 'body' },
-    { en: 'leg', jp: 'あし', emoji: '🦵', category: 'body' },
-    { en: 'arm', jp: 'うで', emoji: '💪', category: 'body' }
+    { en: 'cat',  jp: 'ねこ',     emoji: '🐱', category: 'animals' },
+    { en: 'dog',  jp: 'いぬ',     emoji: '🐕', category: 'animals' },
+    { en: 'sun',  jp: 'たいよう', emoji: '☀️', category: 'nature' },
+    { en: 'sea',  jp: 'うみ',     emoji: '🌊', category: 'nature' },
+    { en: 'sky',  jp: 'そら',     emoji: '🌤️', category: 'nature' },
+    { en: 'egg',  jp: 'たまご',   emoji: '🥚', category: 'food' },
+    { en: 'car',  jp: 'くるま',   emoji: '🚗', category: 'things' },
+    { en: 'hat',  jp: 'ぼうし',   emoji: '🎩', category: 'things' },
+    { en: 'pen',  jp: 'ペン',     emoji: '🖊️', category: 'things' },
+    { en: 'cup',  jp: 'カップ',   emoji: '☕', category: 'things' },
+    { en: 'bed',  jp: 'ベッド',   emoji: '🛏️', category: 'things' },
+    { en: 'box',  jp: 'はこ',     emoji: '📦', category: 'things' },
+    { en: 'red',  jp: 'あか',     emoji: '🔴', category: 'colors' },
+    { en: 'eye',  jp: 'め',       emoji: '👁️', category: 'body' },
+    { en: 'ear',  jp: 'みみ',     emoji: '👂', category: 'body' },
+    { en: 'leg',  jp: 'あし',     emoji: '🦵', category: 'body' },
+    { en: 'arm',  jp: 'うで',     emoji: '💪', category: 'body' },
+    { en: 'hero', jp: 'ヒーロー', emoji: '🦸', category: 'fantasy' }
   ],
   medium: [
-    { en: 'apple', jp: 'りんご', emoji: '🍎', category: 'food' },
-    { en: 'bird', jp: 'とり', emoji: '🐦', category: 'animals' },
-    { en: 'fish', jp: 'さかな', emoji: '🐟', category: 'animals' },
-    { en: 'moon', jp: 'つき', emoji: '🌙', category: 'nature' },
-    { en: 'star', jp: 'ほし', emoji: '⭐', category: 'nature' },
-    { en: 'tree', jp: 'き', emoji: '🌳', category: 'nature' },
-    { en: 'book', jp: 'ほん', emoji: '📖', category: 'things' },
-    { en: 'cake', jp: 'ケーキ', emoji: '🎂', category: 'food' },
-    { en: 'milk', jp: 'ぎゅうにゅう', emoji: '🥛', category: 'food' },
-    { en: 'hand', jp: 'て', emoji: '✋', category: 'body' },
-    { en: 'rain', jp: 'あめ', emoji: '🌧️', category: 'nature' },
-    { en: 'snow', jp: 'ゆき', emoji: '❄️', category: 'nature' },
-    { en: 'blue', jp: 'あお', emoji: '🔵', category: 'colors' },
-    { en: 'pink', jp: 'ピンク', emoji: '🩷', category: 'colors' },
-    { en: 'king', jp: 'おうさま', emoji: '🤴', category: 'people' }
+    { en: 'apple', jp: 'りんご',      emoji: '🍎', category: 'food' },
+    { en: 'food',  jp: 'たべもの',    emoji: '🍱', category: 'food' },
+    { en: 'cake',  jp: 'ケーキ',      emoji: '🎂', category: 'food' },
+    { en: 'milk',  jp: 'ぎゅうにゅう', emoji: '🥛', category: 'food' },
+    { en: 'bird',  jp: 'とり',        emoji: '🐦', category: 'animals' },
+    { en: 'fish',  jp: 'さかな',      emoji: '🐟', category: 'animals' },
+    { en: 'moon',  jp: 'つき',        emoji: '🌙', category: 'nature' },
+    { en: 'star',  jp: 'ほし',        emoji: '⭐', category: 'nature' },
+    { en: 'tree',  jp: 'き',          emoji: '🌳', category: 'nature' },
+    { en: 'rain',  jp: 'あめ',        emoji: '🌧️', category: 'nature' },
+    { en: 'snow',  jp: 'ゆき',        emoji: '❄️', category: 'nature' },
+    { en: 'water', jp: 'みず',        emoji: '💧', category: 'nature' },
+    { en: 'book',  jp: 'ほん',        emoji: '📖', category: 'things' },
+    { en: 'music', jp: 'おんがく',    emoji: '🎵', category: 'things' },
+    { en: 'hand',  jp: 'て',          emoji: '✋', category: 'body' },
+    { en: 'blue',  jp: 'あお',        emoji: '🔵', category: 'colors' },
+    { en: 'pink',  jp: 'ピンク',      emoji: '🩷', category: 'colors' },
+    { en: 'green', jp: 'みどり',      emoji: '🟢', category: 'colors' },
+    { en: 'white', jp: 'しろ',        emoji: '⚪', category: 'colors' },
+    { en: 'black', jp: 'くろ',        emoji: '⚫', category: 'colors' },
+    { en: 'magic', jp: 'まほう',      emoji: '✨', category: 'fantasy' },
+    { en: 'king',  jp: 'おうさま',    emoji: '🤴', category: 'people' }
   ],
   hard: [
-    { en: 'rabbit', jp: 'うさぎ', emoji: '🐰', category: 'animals' },
-    { en: 'orange', jp: 'オレンジ', emoji: '🍊', category: 'food' },
-    { en: 'flower', jp: 'はな', emoji: '🌸', category: 'nature' },
-    { en: 'school', jp: 'がっこう', emoji: '🏫', category: 'places' },
-    { en: 'window', jp: 'まど', emoji: '🪟', category: 'things' },
-    { en: 'monkey', jp: 'さる', emoji: '🐵', category: 'animals' },
-    { en: 'yellow', jp: 'きいろ', emoji: '💛', category: 'colors' },
-    { en: 'purple', jp: 'むらさき', emoji: '💜', category: 'colors' },
-    { en: 'summer', jp: 'なつ', emoji: '🌻', category: 'seasons' },
-    { en: 'winter', jp: 'ふゆ', emoji: '⛄', category: 'seasons' },
-    { en: 'rocket', jp: 'ロケット', emoji: '🚀', category: 'things' },
-    { en: 'family', jp: 'かぞく', emoji: '👨‍👩‍👧', category: 'people' },
-    { en: 'friend', jp: 'ともだち', emoji: '🤝', category: 'people' },
-    { en: 'castle', jp: 'おしろ', emoji: '🏰', category: 'places' },
-    { en: 'dragon', jp: 'ドラゴン', emoji: '🐲', category: 'fantasy' }
+    { en: 'rabbit',    jp: 'うさぎ',    emoji: '🐰', category: 'animals' },
+    { en: 'monkey',    jp: 'さる',      emoji: '🐵', category: 'animals' },
+    { en: 'banana',    jp: 'バナナ',    emoji: '🍌', category: 'food' },
+    { en: 'orange',    jp: 'オレンジ',  emoji: '🍊', category: 'food' },
+    { en: 'flower',    jp: 'はな',      emoji: '🌸', category: 'nature' },
+    { en: 'forest',    jp: 'もり',      emoji: '🌲', category: 'nature' },
+    { en: 'mountain',  jp: 'やま',      emoji: '🏔️', category: 'nature' },
+    { en: 'school',    jp: 'がっこう',  emoji: '🏫', category: 'places' },
+    { en: 'castle',    jp: 'おしろ',    emoji: '🏰', category: 'places' },
+    { en: 'window',    jp: 'まど',      emoji: '🪟', category: 'things' },
+    { en: 'rocket',    jp: 'ロケット',  emoji: '🚀', category: 'things' },
+    { en: 'sports',    jp: 'スポーツ',  emoji: '⚽', category: 'things' },
+    { en: 'yellow',    jp: 'きいろ',    emoji: '💛', category: 'colors' },
+    { en: 'purple',    jp: 'むらさき',  emoji: '💜', category: 'colors' },
+    { en: 'summer',    jp: 'なつ',      emoji: '🌻', category: 'seasons' },
+    { en: 'winter',    jp: 'ふゆ',      emoji: '⛄', category: 'seasons' },
+    { en: 'family',    jp: 'かぞく',    emoji: '👨‍👩‍👧', category: 'people' },
+    { en: 'friends',   jp: 'ともだち',  emoji: '👫', category: 'people' },
+    { en: 'teacher',   jp: 'せんせい',  emoji: '👩‍🏫', category: 'people' },
+    { en: 'crystal',   jp: 'クリスタル', emoji: '💎', category: 'fantasy' },
+    { en: 'courage',   jp: 'ゆうき',    emoji: '🌟', category: 'fantasy' },
+    { en: 'dragon',    jp: 'ドラゴン',  emoji: '🐲', category: 'fantasy' },
+    { en: 'adventure', jp: 'ぼうけん',  emoji: '🗺️', category: 'fantasy' }
   ]
 };
-
 // Game state
-let gameMode = 'challenge';
+const gameMode = 'challenge';
 let difficulty = 'easy';
 let questions = [];
 let currentQ = 0;
@@ -724,17 +740,12 @@ function show(screenId) {
   document.getElementById(screenId).classList.add('active');
 }
 
-function selectMode(mode) {
-  gameMode = mode;
-  show('screen-difficulty');
-}
-
 function startGame(diff) {
   difficulty = diff;
   lastDifficulty = diff;
   
   const pool = [...VOCABULARY[diff]];
-  const count = gameMode === 'practice' ? 5 : 10;
+  const count = 10;
   questions = [];
   
   for (let i = 0; i < count && pool.length > 0; i++) {
@@ -744,7 +755,7 @@ function startGame(diff) {
 
   currentQ = 0;
   score = 0;
-  lives = gameMode === 'practice' ? 999 : MAX_LIVES;
+  lives = MAX_LIVES;
   mistakes = [];
   
   document.getElementById('score').textContent = score;
@@ -779,10 +790,6 @@ function updateDot(idx, state) {
 
 function updateLives() {
   const container = document.getElementById('lives');
-  if (gameMode === 'practice') {
-    container.textContent = '∞';
-    return;
-  }
   const hearts = Array.from({length: MAX_LIVES}, (_, i) => 
     i < lives ? '❤️' : '🖤'
   ).join('');
@@ -862,8 +869,17 @@ function updateGuideTextSize() {
   // The x-height zone (where lowercase body sits)
   const xHeightZone = baseLineY - midLineY;  // 0.20 of height
   
-  // Make font bigger - use 0.45 instead of 0.55 to increase size
-  const fontSize = xHeightZone / 0.45;
+  // Base font size
+  let fontSize = xHeightZone / 0.45;
+
+  // Scale down for longer words so they fit within the canvas width
+  // Each letter needs roughly fontSize * 0.62px (Comic Relief character width ratio)
+  const word = questions[currentQ] ? questions[currentQ].en : '';
+  const estimatedWidth = word.length * fontSize * 0.62;
+  const availableWidth = svgWidth * 0.88; // leave a little padding on each side
+  if (estimatedWidth > availableWidth) {
+    fontSize = fontSize * (availableWidth / estimatedWidth);
+  }
   
   guideText.style.fontSize = fontSize + 'px';
   guideText.style.lineHeight = '1';
@@ -966,12 +982,7 @@ function loadQuestion() {
   updateDot(currentQ, 'current');
   
   hintShown = false;
-  
-  if (gameMode === 'challenge') {
-    startTimer();
-  } else {
-    document.getElementById('timer-num').textContent = '∞';
-  }
+  startTimer();
 }
 
 function startTimer() {
@@ -1261,12 +1272,7 @@ function submitAnswer() {
   
   if (isAccepted) {
     // Calculate points based on how well they did
-    let pts;
-    if (gameMode === 'challenge') {
-      pts = Math.max(10, Math.floor(timer / TIME_PER_Q * 100));
-    } else {
-      pts = 10;
-    }
+    let pts = Math.max(10, Math.floor(timer / TIME_PER_Q * 100));
     
     // Bonus for not using hint
     if (!hintShown) {
@@ -1303,8 +1309,6 @@ function recordMistake() {
 }
 
 function loseLife() {
-  if (gameMode === 'practice') return;
-  
   lives--;
   updateLives();
   
@@ -1315,7 +1319,7 @@ function loseLife() {
 }
 
 function nextQuestion() {
-  if (lives <= 0 && gameMode === 'challenge') return;
+  if (lives <= 0) return;
   
   currentQ++;
   if (currentQ >= questions.length) {
