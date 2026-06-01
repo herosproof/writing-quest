@@ -4,77 +4,73 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Hero's Proof – Writing Quest</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@700;900&family=Comic+Relief&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fredoka:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Kosugi+Maru&family=Comic+Relief&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a1a;
-    --panel: #13132b;
-    --border: #3a2fff;
-    --accent1: #ffe94d;
-    --accent2: #ff4dce;
-    --accent3: #4dffb8;
-    --accent4: #4da6ff;
-    --text: #ffffff;
-    --soft: #b0b8e8;
-    --correct: #4dffb8;
-    --wrong: #ff4d6e;
-    --parchment: #fef9f0;
-    --ink: #1a1a3a;
+    --bg:           #3a2558;
+    --bg2:          #2a1845;
+    --panel2:       #1e1235;
+    --cream:        #f5eedc;
+    --card-bg:      rgba(245,238,220,0.95);
+    --border-gold:  rgba(245,158,11,0.25);
+    --purple:       #9060c0;
+    --purple-light: #c8a0e0;
+    --purple-pale:  #ede0f8;
+    --purple-dark:  #4a3870;
+    --gold:         #c9a030;
+    --gold-light:   #f0d060;
+    --gold-pale:    #f8f0c0;
+    --tan:          #c4a882;
+    --beige:        #d9c9a8;
+    --brown:        #5c2810;
+    --text-dark:    #1e1235;
+    --text-soft:    #3a2558;
+    --text-muted:   rgba(200,160,224,0.75);
+    --red:          #c83030;
+    --red-pale:     #fee2e2;
+    --green:        #4a9040;
+    --green-pale:   #d0e8b0;
+    --mauve:        #c07888;
+    --parchment:    #f5eedc;
+    --ink:          #1e1235;
+    --shadow:       rgba(0,0,0,0.4);
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { height: 100%; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { height:100%; }
 
   body {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Fredoka', 'Kosugi Maru', sans-serif;
     background: var(--bg);
-    color: var(--text);
+    color: var(--text-dark);
     min-height: 100dvh;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
-    padding: 16px 12px 40px;
+    padding: 16px 12px 48px;
     overflow-x: hidden;
   }
 
-  /* Animated background */
-  .stars {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-  }
-  .star {
+  /* ── Starfield — exactly matching v14 sugoroku ── */
+  .starfield { position:fixed; inset:0; pointer-events:none; z-index:0; }
+  .starfield span {
     position: absolute;
-    border-radius: 50%;
-    background: white;
-    animation: twinkle var(--dur) ease-in-out infinite;
-    opacity: 0;
+    animation: twinkle var(--d,3s) ease-in-out infinite var(--delay,0s);
+    display: flex; align-items:center; justify-content:center;
+    font-size: var(--sz,1rem);
+    color: var(--col,#fde68a);
+    text-shadow: 0 0 6px var(--col,#fde68a);
+    line-height: 1;
   }
   @keyframes twinkle {
-    0%, 100% { opacity: 0; transform: scale(0.5); }
-    50% { opacity: 0.8; transform: scale(1); }
-  }
-
-  .crystal {
-    position: fixed;
-    font-size: 1.5rem;
-    animation: floatCrystal var(--dur) ease-in-out infinite;
-    opacity: 0.18;
-    pointer-events: none;
-    z-index: 0;
-  }
-  @keyframes floatCrystal {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(10deg); }
+    0%,100%{ opacity:0; transform:scale(.3) rotate(0deg) }
+    50%    { opacity:.9; transform:scale(1) rotate(20deg) }
   }
 
   .container {
-    position: relative;
-    z-index: 1;
+    position: relative; z-index:1;
     width: min(700px, 95vw);
     display: flex;
     flex-direction: column;
@@ -82,466 +78,503 @@
     gap: 0;
   }
 
-  .screen { display: none; width: 100%; }
-  .screen.active { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .screen { display:none; width:100%; }
+  .screen.active { display:flex; flex-direction:column; align-items:center; gap:20px; }
 
-  /* ===== TITLE SCREEN ===== */
-  .logo {
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(1rem, 4vw, 1.4rem);
-    color: var(--accent1);
-    text-shadow:
-      0 0 10px var(--accent1),
-      0 0 30px rgba(255,233,77,0.4),
-      3px 3px 0px #a07800;
-    line-height: 1.6;
-    animation: logoPulse 2s ease-in-out infinite;
+  /* ════════════════════════════════
+     HEADER (title screen)
+  ════════════════════════════════ */
+  .title-header {
+    width:100%;
+    background: linear-gradient(160deg, #2a1845 0%, #1e1235 60%, #150d28 100%);
+    padding: 28px 20px 20px;
     text-align: center;
+    position: relative;
+    box-shadow: 0 4px 24px rgba(124,58,237,0.35);
+    border-bottom: 1px solid rgba(167,139,250,0.2);
+    border-radius: 0 0 20px 20px;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
   }
-  @keyframes logoPulse {
-    0%, 100% { text-shadow: 0 0 10px var(--accent1), 0 0 30px rgba(255,233,77,0.4), 3px 3px 0px #a07800; }
-    50% { text-shadow: 0 0 20px var(--accent1), 0 0 60px rgba(255,233,77,0.6), 3px 3px 0px #a07800; }
+  .title-header::before {
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(144,96,192,0.22) 0%, transparent 70%);
+    pointer-events:none;
   }
-
+  .logo-img {
+    max-height: 160px; max-width: 92%;
+    object-fit: contain; display:block;
+    margin: 0 auto 8px;
+    position: relative; z-index:1;
+    filter: drop-shadow(0 2px 16px rgba(167,139,250,0.5));
+  }
+  .title-emblem {
+    font-size:3rem; display:block;
+    margin-bottom:8px; position:relative; z-index:1;
+    animation: emblemFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 16px rgba(201,160,48,0.5));
+  }
+  @keyframes emblemFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .logo-wordmark {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(0.8rem,3.5vw,1.1rem);
+    color: #fff;
+    text-shadow: 0 0 24px rgba(167,139,250,0.7), 0 2px 4px rgba(0,0,0,0.5);
+    line-height: 1.7; position:relative; z-index:1;
+  }
   .subtitle {
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(0.45rem, 1.5vw, 0.6rem);
-    color: var(--accent2);
-    text-shadow: 0 0 8px var(--accent2);
-    margin-top: -8px;
-    letter-spacing: 0.05em;
-    text-align: center;
+    font-family: 'Zen Maru Gothic','Kosugi Maru',sans-serif;
+    font-size: clamp(0.88rem,2.5vw,1.05rem);
+    color: var(--gold-light); font-weight:600;
+    letter-spacing: 0.12em; margin-top:4px;
+    position:relative; z-index:1;
+  }
+  .header-divider {
+    width:100px; height:1px;
+    background: linear-gradient(90deg,transparent,var(--gold),transparent);
+    margin: 10px auto 0; opacity:0.6;
+    position:relative; z-index:1;
   }
 
-  .hero-emoji {
-    font-size: 4rem;
-    animation: heroFloat 3s ease-in-out infinite;
-    filter: drop-shadow(0 0 16px var(--accent1));
-  }
-  @keyframes heroFloat {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-10px) scale(1.05); }
-  }
-
+  /* ════════════════════════════════
+     INSTRUCTIONS PANEL
+  ════════════════════════════════ */
   .instructions {
-    background: var(--panel);
-    border: 2px solid var(--border);
-    border-radius: 16px;
-    padding: 18px 22px;
-    font-size: clamp(0.85rem, 2.5vw, 1rem);
-    line-height: 1.8;
-    color: var(--soft);
-    text-align: left;
-    width: 100%;
-    box-shadow: 0 0 24px rgba(58,47,255,0.3);
+    background: var(--card-bg);
+    border: 1px solid var(--border-gold);
+    border-radius: 20px;
+    padding: 20px 22px;
+    font-size: clamp(0.9rem,2.5vw,1rem);
+    line-height: 1.85; width:100%;
+    box-shadow: 0 4px 24px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.8);
+    color: var(--text-dark);
   }
-  .instructions .en { color: var(--accent3); font-weight: 900; }
-  .instructions .jp { color: var(--soft); font-size: 0.88em; }
-
-  .mode-buttons {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
+  .instructions .en {
+    font-family: 'Fredoka',sans-serif;
+    font-size: 1.05rem; font-weight:700;
+    color: var(--text-dark);
+  }
+  .instructions .jp {
+    font-family: 'Zen Maru Gothic','Kosugi Maru',sans-serif;
+    font-size: 0.9rem; color:var(--brown); font-weight:500;
+    margin-bottom: 6px;
   }
 
+  /* ════════════════════════════════
+     BUTTONS
+  ════════════════════════════════ */
   .btn {
     font-family: 'Press Start 2P', monospace;
-    font-size: clamp(0.5rem, 1.8vw, 0.7rem);
-    background: linear-gradient(135deg, var(--accent2), var(--border));
-    color: white;
-    border: none;
-    border-radius: 12px;
+    font-size: clamp(0.5rem,1.8vw,0.7rem);
+    background: linear-gradient(135deg,#ede0f8,#d8c8f0);
+    color: var(--text-dark);
+    border: 2px solid var(--purple);
+    border-radius: 14px;
     padding: 14px 28px;
     cursor: pointer;
-    box-shadow: 0 4px 0px #1a007a, 0 0 24px rgba(255,77,206,0.4);
+    box-shadow: 0 4px 0 #6840a0;
     transition: transform 0.1s, box-shadow 0.1s;
     letter-spacing: 0.05em;
   }
-  .btn:hover  { transform: translateY(-2px); box-shadow: 0 6px 0px #1a007a, 0 0 32px rgba(255,77,206,0.6); }
-  .btn:active { transform: translateY(2px); box-shadow: 0 2px 0px #1a007a; }
+  .btn:hover  { transform:translateY(-2px); box-shadow:0 6px 0 #6840a0; }
+  .btn:active { transform:translateY(3px); box-shadow:0 1px 0 #6840a0; }
 
   .btn.secondary {
-    background: linear-gradient(135deg, var(--accent4), var(--accent3));
+    background: linear-gradient(135deg,var(--gold-pale),var(--gold-light));
+    border-color: var(--gold);
+    box-shadow: 0 4px 0 #a07820;
+    color: var(--brown);
+  }
+  .btn.secondary:hover  { box-shadow:0 6px 0 #a07820; }
+  .btn.secondary:active { box-shadow:0 1px 0 #a07820; }
+
+  .btn-hub {
+    font-family: 'Fredoka',sans-serif;
+    font-size: 0.9rem; font-weight:600;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid rgba(167,139,250,0.25);
+    border-radius: 50px; padding:8px 22px;
+    cursor: pointer; text-decoration:none;
+    transition: color 0.2s, border-color 0.2s;
+    display: inline-block;
+  }
+  .btn-hub:hover { color:var(--gold-light); border-color:rgba(245,158,11,0.4); }
+
+  .mode-buttons {
+    display:flex; gap:12px; flex-wrap:wrap;
+    justify-content:center; width:100%;
   }
 
-  /* ===== DIFFICULTY SCREEN ===== */
+  /* ════════════════════════════════
+     DIFFICULTY SCREEN
+  ════════════════════════════════ */
   .difficulty-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 16px;
-    width: 100%;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:16px; width:100%;
   }
-
   .difficulty-card {
-    background: var(--panel);
-    border: 2px solid var(--border);
-    border-radius: 16px;
+    background: var(--card-bg);
+    border: 2px solid var(--border-gold);
+    border-radius: 18px;
     padding: 20px;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.2s;
-    box-shadow: 0 0 16px rgba(58,47,255,0.2);
+    cursor: pointer; text-align:center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.8);
+    color: var(--text-dark);
   }
   .difficulty-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 0 32px rgba(58,47,255,0.4);
-    border-color: var(--accent3);
+    box-shadow: 0 8px 24px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+  .difficulty-card.easy  { border-color:rgba(74,144,64,0.4); }
+  .difficulty-card.medium{ border-color:rgba(201,160,48,0.5); }
+  .difficulty-card.hard  { border-color:rgba(200,48,48,0.4); }
+
+  .diff-emoji { font-size:2.5rem; margin-bottom:8px; }
+  .diff-title {
+    font-family:'Fredoka',sans-serif;
+    font-size:1.1rem; font-weight:700;
+    color:var(--text-dark); margin-bottom:4px;
+  }
+  .diff-desc {
+    font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;
+    font-size:0.82rem; color:var(--brown);
   }
 
-  .diff-emoji { font-size: 2.5rem; margin-bottom: 8px; }
-  .diff-title { 
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.6rem;
-    color: var(--accent1);
-    margin-bottom: 6px;
+  .diff-screen-label {
+    font-family:'Press Start 2P',monospace;
+    font-size:clamp(0.6rem,2.5vw,0.85rem);
+    color:var(--gold-light);
+    text-shadow:0 0 16px rgba(240,208,96,0.5), 2px 2px 0 var(--brown);
+    line-height:1.7; text-align:center;
   }
-  .diff-desc { font-size: 0.75rem; color: var(--soft); }
 
-  /* ===== GAME SCREEN ===== */
+  /* ════════════════════════════════
+     GAME SCREEN
+  ════════════════════════════════ */
   .top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 10px 16px;
-    background: var(--panel);
-    border: 2px solid var(--border);
-    border-radius: 14px;
-    box-shadow: 0 0 16px rgba(58,47,255,0.2);
-    flex-wrap: wrap;
-    gap: 8px;
+    display:flex; justify-content:space-between;
+    align-items:center; width:100%;
+    padding:10px 16px;
+    background: linear-gradient(160deg, #2a1845 0%, #1e1235 100%);
+    border: 1px solid rgba(167,139,250,0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    flex-wrap:wrap; gap:8px;
   }
-
-  .score-display, .timer-num {
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(0.5rem, 1.5vw, 0.7rem);
-    color: var(--accent1);
-    text-shadow: 0 0 8px var(--accent1);
+  .score-display {
+    font-family:'Press Start 2P',monospace;
+    font-size:clamp(0.5rem,1.5vw,0.65rem);
+    color:var(--gold-light);
+    text-shadow:0 0 8px rgba(240,208,96,0.5);
   }
-  .lives { font-size: 1.2rem; letter-spacing: 2px; }
-
-  .timer-num.low { color: var(--wrong); text-shadow: 0 0 8px var(--wrong); animation: timerPulse 0.5s ease-in-out infinite; }
-  @keyframes timerPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.15); }
+  .score-display span { color:#fff; }
+  .timer-num {
+    font-family:'Press Start 2P',monospace;
+    font-size:clamp(0.5rem,1.5vw,0.65rem);
+    color:var(--purple-light);
+    text-shadow:0 0 8px rgba(200,160,224,0.5);
   }
+  .timer-num.low { color:var(--mauve); animation:timerPulse 0.5s ease-in-out infinite; }
+  @keyframes timerPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+  .lives { font-size:1.1rem; letter-spacing:2px; }
 
-  .progress-dots { 
-    display: flex; 
-    gap: 6px; 
-    justify-content: center; 
-    flex-wrap: wrap;
-    width: 100%;
+  /* Progress dots */
+  .progress-dots {
+    display:flex; gap:6px; justify-content:center;
+    flex-wrap:wrap; width:100%;
   }
   .dot {
-    width: 10px; 
-    height: 10px; 
-    border-radius: 50%;
-    background: #2a2a4a; 
-    border: 1px solid var(--border);
+    width:11px; height:11px; border-radius:50%;
+    background:rgba(42,24,69,0.15);
+    border:1px solid rgba(167,139,250,0.3);
+    transition:background 0.3s;
   }
-  .dot.current { background: var(--accent3); box-shadow: 0 0 8px var(--accent3); }
-  .dot.done { background: var(--correct); }
-  .dot.wrong-dot { background: var(--wrong); }
+  .dot.current   { background:var(--gold);  box-shadow:0 0 8px var(--gold); animation:dotPulse 0.8s ease-in-out infinite; }
+  .dot.done      { background:var(--green); box-shadow:0 0 6px var(--green); }
+  .dot.wrong-dot { background:var(--mauve); box-shadow:0 0 6px var(--mauve); }
+  @keyframes dotPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.35)} }
 
+  /* Question area — cream panel */
   .question-area {
-    background: var(--panel);
-    border: 2px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 0 24px rgba(58,47,255,0.25);
+    background: var(--card-bg);
+    border: 1px solid var(--border-gold);
+    border-radius: 18px;
+    padding: 20px; width:100%; text-align:center;
+    box-shadow: 0 4px 24px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.8);
+    color: var(--text-dark);
   }
-
   .jp-hint {
-    font-size: clamp(1.2rem, 3.5vw, 1.6rem);
-    color: var(--soft);
-    font-weight: 700;
-    margin-bottom: 8px;
+    font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;
+    font-size:clamp(1.2rem,3.5vw,1.6rem);
+    color:var(--brown); font-weight:700;
+    margin-bottom:6px;
   }
-
-  .hint-emoji {
-    font-size: 3rem;
-    margin: 8px 0;
-  }
-
+  .hint-emoji { font-size:3rem; margin:8px 0; }
   .category-badge {
-    display: inline-block;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.4rem;
-    padding: 4px 10px;
-    border-radius: 20px;
-    background: rgba(255,233,77,0.15);
-    color: var(--accent1);
-    border: 1px solid rgba(255,233,77,0.3);
-    margin-top: 8px;
+    display:inline-block;
+    font-family:'Fredoka',sans-serif;
+    font-size:0.72rem; font-weight:700;
+    padding:4px 14px; border-radius:20px;
+    background:rgba(201,160,48,0.15);
+    color:var(--brown);
+    border:1px solid rgba(201,160,48,0.4);
+    margin-top:8px; letter-spacing:0.06em; text-transform:uppercase;
   }
 
-  /* ===== WRITING AREA (SVG-based) ===== */
+  /* ════════════════════════════════
+     CANVAS / WRITING AREA
+  ════════════════════════════════ */
   .canvas-container {
     background: var(--parchment);
-    border: 3px solid var(--border);
-    border-radius: 12px;
-    padding: 12px;
-    width: 100%;
-    position: relative;
-    box-shadow: 0 0 24px rgba(58,47,255,0.3), inset 0 2px 8px rgba(0,0,0,0.05);
+    border: 2px solid rgba(201,160,48,0.4);
+    border-radius: 14px;
+    padding: 12px; width:100%; position:relative;
+    box-shadow: 0 4px 20px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.9);
   }
-
   .svg-wrapper {
-    position: relative;
-    width: 100%;
-    height: 200px;
-    border-radius: 8px;
-    overflow: hidden;
+    position:relative; width:100%; height:200px;
+    border-radius: 8px; overflow:hidden;
     background: var(--parchment);
   }
-
   #drawing-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-    touch-action: none;
-    cursor: crosshair;
+    width:100%; height:100%;
+    display:block; touch-action:none; cursor:crosshair;
   }
-
   .drawing-path {
-    fill: none;
-    stroke: var(--ink);
-    stroke-width: 3.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    fill:none;
+    stroke:var(--ink);
+    stroke-width:3.5;
+    stroke-linecap:round;
+    stroke-linejoin:round;
   }
-
+  /* Comic Relief kept for guide text — functional, not UI */
   .guide-text {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Comic Relief', cursive;
-    font-weight: 400;
-    color: var(--ink);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s;
-    letter-spacing: 0.05em;
-    /* Font size will be set dynamically by JS */
+    position:absolute; top:0; left:0;
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Comic Relief',cursive;
+    font-weight:400;
+    color:var(--ink);
+    opacity:0; pointer-events:none;
+    transition:opacity 0.5s;
+    letter-spacing:0.05em;
   }
-  .guide-text.visible { opacity: 0.35; }
+  .guide-text.visible { opacity:0.35; }
 
+  /* Canvas buttons */
   .canvas-buttons {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    margin-top: 12px;
-    flex-wrap: wrap;
+    display:flex; gap:8px; justify-content:center;
+    margin-top:12px; flex-wrap:wrap;
   }
-
   .canvas-btn {
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 700;
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: 2px solid var(--border);
-    background: var(--panel);
-    color: var(--text);
-    cursor: pointer;
-    transition: all 0.2s;
+    font-family:'Fredoka',sans-serif;
+    font-size:0.9rem; font-weight:700;
+    padding:10px 18px; border-radius:10px;
+    border:1px solid var(--border-gold);
+    background:var(--card-bg);
+    color:var(--text-dark);
+    cursor:pointer;
+    box-shadow:0 3px 0 rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+    transition:transform 0.1s, box-shadow 0.1s;
   }
-  .canvas-btn:hover {
-    background: var(--border);
-    transform: translateY(-2px);
-  }
-  .canvas-btn:active {
-    transform: translateY(1px);
-  }
+  .canvas-btn:hover  { transform:translateY(-2px); }
+  .canvas-btn:active { transform:translateY(2px); box-shadow:none; }
   .canvas-btn.submit {
-    background: linear-gradient(135deg, var(--accent3), var(--accent4));
-    border-color: var(--accent3);
-    font-weight: 900;
+    background: var(--green-pale);
+    border-color:var(--green);
+    color:#1a3810;
+    box-shadow:0 3px 0 #3a7030, inset 0 1px 0 rgba(255,255,255,0.8);
+    font-weight:900;
   }
+  .canvas-btn.submit:active { box-shadow:none; }
 
+  /* Feedback */
   .feedback {
-    font-size: 1.1rem;
-    font-weight: 900;
-    margin-top: 12px;
-    min-height: 30px;
-    transition: all 0.3s;
-    text-align: center;
+    font-family:'Fredoka',sans-serif;
+    font-size:1.05rem; font-weight:700;
+    margin-top:12px; min-height:30px;
+    transition:all 0.3s; text-align:center;
+    color:var(--text-dark);
   }
-  .feedback.ok { color: var(--correct); text-shadow: 0 0 8px var(--correct); }
-  .feedback.bad { color: var(--wrong); text-shadow: 0 0 8px var(--wrong); }
+  .feedback.ok  { color:var(--green); }
+  .feedback.bad { color:var(--mauve); }
 
-  /* ===== RESULT SCREEN ===== */
-  .result-emoji { font-size: 5rem; margin: 10px 0; }
-  
+  /* ════════════════════════════════
+     RESULT SCREEN
+  ════════════════════════════════ */
+  .result-emoji { font-size:4rem; margin:10px 0; filter:drop-shadow(0 0 20px var(--gold)); }
   .result-title {
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(0.8rem, 3vw, 1.2rem);
-    line-height: 1.8;
-    white-space: pre-line;
-    text-align: center;
+    font-family:'Press Start 2P',monospace;
+    font-size:clamp(0.75rem,3vw,1rem);
+    line-height:1.9; white-space:pre-line; text-align:center;
   }
-  .result-title.great { color: var(--accent1); text-shadow: 0 0 20px var(--accent1); }
-  .result-title.good { color: var(--accent3); text-shadow: 0 0 16px var(--accent3); }
-  .result-title.try { color: var(--accent2); text-shadow: 0 0 16px var(--accent2); }
+  .result-title.great { color:var(--gold-light); text-shadow:0 0 20px rgba(240,208,96,0.6); }
+  .result-title.good  { color:var(--purple-light); text-shadow:0 0 20px rgba(200,160,224,0.6); }
+  .result-title.try   { color:var(--tan); }
 
   .result-sub {
-    font-size: clamp(0.75rem, 2vw, 0.95rem);
-    color: var(--soft);
-    text-align: center;
-    margin: 8px 0 16px;
-    line-height: 1.6;
+    font-family:'Fredoka',sans-serif;
+    font-size:clamp(0.82rem,2vw,0.95rem);
+    color:var(--text-soft); text-align:center;
+    margin:8px 0 16px; line-height:1.6;
   }
 
-  .stars-display {
-    display: flex;
-    gap: 16px;
-    font-size: 3rem;
-    margin: 16px 0;
+  /* Result score box — cream panel */
+  .result-score-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border-gold);
+    border-radius:20px; padding:22px 32px; width:100%;
+    box-shadow:0 4px 24px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.8);
+    text-align:center; color:var(--text-dark);
   }
-  .star-icon {
-    opacity: 0.2;
-    filter: grayscale(1);
-    transition: all 0.4s;
-  }
+  .stars-display { display:flex; gap:16px; font-size:2.5rem; margin:12px 0; justify-content:center; }
+  .star-icon { opacity:0.2; filter:grayscale(1); transition:all 0.4s; }
   .star-icon.lit {
-    opacity: 1;
-    filter: grayscale(0);
-    animation: starPop 0.5s ease-out;
+    opacity:1; filter:grayscale(0) drop-shadow(0 0 10px var(--gold));
+    animation:starPop 0.4s ease backwards;
   }
-  @keyframes starPop {
-    0% { transform: scale(0); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
-  }
+  @keyframes starPop { 0%{transform:scale(0)} 70%{transform:scale(1.3)} 100%{transform:scale(1)} }
 
   .final-score {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 1.5rem;
-    color: var(--accent1);
-    text-shadow: 0 0 16px var(--accent1);
-    margin: 12px 0;
+    font-family:'Press Start 2P',monospace;
+    font-size:clamp(1.2rem,4vw,1.8rem);
+    color:var(--purple-dark);
+    margin:8px 0;
+  }
+  .score-label {
+    font-family:'Fredoka',sans-serif;
+    font-size:0.95rem; font-weight:600;
+    color:var(--text-soft); margin-top:4px;
   }
 
-  /* Mistakes list */
+  /* Mistakes list — cream panel */
   .mistakes-list {
-    background: var(--panel);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    width: 100%;
-    margin-top: 16px;
+    background: var(--card-bg);
+    border: 1px solid rgba(200,48,48,0.25);
+    border-radius:16px; padding:16px 18px; width:100%;
+    box-shadow:0 4px 16px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.8);
+    color:var(--text-dark);
   }
-  .mistakes-list.hidden { display: none; }
+  .mistakes-list.hidden { display:none; }
   .mistakes-title {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.55rem;
-    color: var(--accent2);
-    margin-bottom: 12px;
-    text-align: center;
+    font-family:'Fredoka',sans-serif;
+    font-size:1rem; font-weight:700;
+    color:var(--brown); margin-bottom:12px; text-align:center;
   }
   .mistake-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 6px;
-    margin-bottom: 6px;
-    font-size: 0.9rem;
+    display:flex; align-items:center; gap:8px;
+    padding:7px 0; border-bottom:1px dashed rgba(92,40,16,0.15);
+    font-size:0.92rem;
   }
-  .mistake-jp { color: var(--soft); }
-  .mistake-arrow { color: var(--accent2); }
-  .mistake-correct { color: var(--correct); font-weight: 700; }
+  .mistake-item:last-child { border-bottom:none; }
+  .mistake-jp    { font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif; color:var(--brown); font-weight:600; }
+  .mistake-arrow { color:var(--tan); }
+  .mistake-correct { color:var(--green); font-weight:700; }
 
   /* Particles */
   .particle {
-    position: fixed;
-    font-size: 1.5rem;
-    pointer-events: none;
-    z-index: 100;
-    animation: particleFly 0.8s ease-out forwards;
+    position:fixed; font-size:1.3rem;
+    pointer-events:none; z-index:100;
+    animation:particleFly 0.8s ease-out forwards;
   }
   @keyframes particleFly {
-    0% { transform: translate(0,0) scale(1); opacity: 1; }
-    100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+    0%  { transform:translate(0,0) scale(1); opacity:1; }
+    100%{ transform:translate(var(--tx),var(--ty)) scale(0); opacity:0; }
   }
 
-  @media (max-width: 500px) {
-    .svg-wrapper { height: 180px; }
+
+  /* Reset button — matching v14 sugoroku */
+  .reset-row { text-align:center; margin-top:8px; }
+  .reset-btn {
+    background: transparent;
+    border: 1px solid rgba(144,96,192,0.4);
+    border-radius: 50px;
+    padding: 8px 22px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 0.85rem; font-weight: 700;
+    color: rgba(220,200,240,0.85);
+    cursor: pointer;
   }
+  .reset-btn:active { background: rgba(144,96,192,0.08); }
+  @media (max-width:500px) { .svg-wrapper { height:180px; } }
 </style>
 </head>
 <body>
 
-<div class="stars" id="stars"></div>
+<div class="starfield" id="starfield"></div>
 
 <div class="container">
 
-  <!-- ===== TITLE SCREEN ===== -->
+  <!-- ════ TITLE SCREEN ════ -->
   <div id="screen-title" class="screen active">
-    <div class="hero-emoji">✒️</div>
-    <div class="logo">HERO'S PROOF</div>
-    <div class="subtitle">✦ WRITING QUEST ✦</div>
-    
+    <a href="https://herosproof.github.io" class="title-header">
+      <img src="logo.png" alt="Hero's Proof" class="logo-img"
+           onload="document.getElementById('wq-fallback').style.display='none';"
+           onerror="this.style.display='none';">
+      <div id="wq-fallback">
+        <span class="title-emblem">✒️</span>
+        <div class="logo-wordmark">HERO'S PROOF</div>
+      </div>
+      <div class="subtitle">✦ Writing Quest · ライティングクエスト ✦</div>
+      <div class="header-divider"></div>
+    </a>
+
     <div class="instructions">
       <div class="en">👀 Look at the Japanese word</div>
-      <div class="jp">日本語を見て..</div>
-     <div class="en">🤷‍♀️ Click the hint in a pinch</div>
-      <div class="jp">困ったらヒント(Hint)のボタンを押して..</div>    
-      <div class="en">✍🏽 Write the English word with your pen or finger!</div>
+      <div class="jp">日本語を見て…</div>
+      <div class="en">🤷 Click Hint if you need help</div>
+      <div class="jp">困ったらヒントのボタンを押して…</div>
+      <div class="en">✍️ Write the English word with your pen or finger!</div>
       <div class="jp">ペンか指で英単語を書こう！</div>
       <div class="en">📝 Practice spelling and handwriting!</div>
       <div class="jp">つづりと書き方の練習だよ！</div>
       <div class="en">⏱️ 30 seconds per question</div>
       <div class="jp">1もん30びょうでこたえてね。</div>
-      <div class="en" style="margin-top:8px;">♥️ Three mistakes = Game Over!</div>
+      <div class="en">❤️ 3 mistakes = Game Over!</div>
       <div class="jp">3かいまちがえたらゲームオーバー！</div>
     </div>
 
     <div class="mode-buttons">
       <button class="btn" onclick="show('screen-difficulty')">▶ START / スタート</button>
     </div>
+    <a href="https://herosproof.github.io" class="btn-hub">🏠 Home / ホーム</a>
   </div>
 
-  <!-- ===== DIFFICULTY SCREEN ===== -->
+  <!-- ════ DIFFICULTY SCREEN ════ -->
   <div id="screen-difficulty" class="screen">
-    <div class="logo" style="font-size:clamp(0.7rem,3vw,1rem);">SELECT LEVEL<br>レベルを選ぼう</div>
-    
+    <div class="diff-screen-label">SELECT LEVEL<br>レベルを選ぼう</div>
+
     <div class="difficulty-grid">
-      <div class="difficulty-card" onclick="startGame('easy')">
+      <div class="difficulty-card easy" onclick="startGame('easy')">
         <div class="diff-emoji">🌱</div>
-        <div class="diff-title">EASY</div>
-        <div class="diff-desc">かんたん<br>3-4 letters</div>
+        <div class="diff-title">Easy</div>
+        <div class="diff-desc">かんたん<br>3〜4 letters</div>
       </div>
-      <div class="difficulty-card" onclick="startGame('medium')">
+      <div class="difficulty-card medium" onclick="startGame('medium')">
         <div class="diff-emoji">🌟</div>
-        <div class="diff-title">MEDIUM</div>
-        <div class="diff-desc">ふつう<br>4-5 letters</div>
+        <div class="diff-title">Medium</div>
+        <div class="diff-desc">ふつう<br>4〜5 letters</div>
       </div>
-      <div class="difficulty-card" onclick="startGame('hard')">
+      <div class="difficulty-card hard" onclick="startGame('hard')">
         <div class="diff-emoji">🔥</div>
-        <div class="diff-title">HARD</div>
-        <div class="diff-desc">むずかしい<br>5-7 letters</div>
+        <div class="diff-title">Hard</div>
+        <div class="diff-desc">むずかしい<br>5〜7 letters</div>
       </div>
     </div>
 
-    <button class="btn secondary" onclick="show('screen-title')">← BACK</button>
+    <button class="btn secondary" onclick="show('screen-title')">← Back / もどる</button>
   </div>
 
-  <!-- ===== GAME SCREEN ===== -->
+  <!-- ════ GAME SCREEN ════ -->
   <div id="screen-game" class="screen">
     <div class="top-bar">
-      <div class="score-display">⭐ <span id="score">0</span></div>
+      <div class="score-display">💎 <span id="score">0</span></div>
       <div class="timer-num" id="timer-num">30</div>
       <div class="lives" id="lives">❤️❤️❤️</div>
     </div>
@@ -572,110 +605,138 @@
     </div>
 
     <div class="feedback" id="feedback"></div>
+    <div class="reset-row">
+      <button class="reset-btn" onclick="confirmResetWQ()">↺ Reset Game / ゲームをリセット</button>
+    </div>
   </div>
 
-  <!-- ===== RESULT SCREEN ===== -->
+  <!-- ════ RESULT SCREEN ════ -->
   <div id="screen-result" class="screen">
     <div class="result-emoji" id="result-emoji">🏆</div>
     <div class="result-title" id="result-title">HERO'S PROOF!</div>
-    <div class="result-sub" id="result-sub">Amazing!</div>
-    
-    <div class="stars-display">
-      <span class="star-icon" id="star1">⭐</span>
-      <span class="star-icon" id="star2">⭐</span>
-      <span class="star-icon" id="star3">⭐</span>
+
+    <div class="result-score-box">
+      <div class="stars-display">
+        <span class="star-icon" id="star1">⭐</span>
+        <span class="star-icon" id="star2">⭐</span>
+        <span class="star-icon" id="star3">⭐</span>
+      </div>
+      <div class="final-score"><span id="final-score">0</span></div>
+      <div class="score-label">points / ポイント</div>
     </div>
 
-    <div class="final-score"><span id="final-score">0</span> pts</div>
+    <div class="result-sub" id="result-sub">Amazing!</div>
 
     <div class="mistakes-list hidden" id="mistakes-list">
-      <div class="mistakes-title">📝 REVIEW / ふりかえり</div>
+      <div class="mistakes-title">📝 Review / ふりかえり</div>
       <div id="mistakes-body"></div>
     </div>
 
     <div class="mode-buttons">
-      <button class="btn" onclick="retryGame()">🔄 RETRY</button>
-      <button class="btn secondary" onclick="goTitle()">🏠 HOME</button>
+      <button class="btn" onclick="retryGame()">🔄 Retry / もういちど</button>
+      <a href="https://herosproof.github.io" class="btn secondary" style="text-decoration:none;display:inline-block;padding:14px 28px;text-align:center;">🏠 Home / ホーム</a>
     </div>
   </div>
 
-</div>
+</div><!-- /container -->
 
 <script>
-// ===== VOCABULARY =====
+/* ═══════════════════════════════════════
+   STARFIELD — exactly matching v14 sugoroku
+═══════════════════════════════════════ */
+(function(){
+  const sf = document.getElementById('starfield');
+  const glyphs = ['✦','✧','⋆','✴','★','✸','·','✦','✧'];
+  const colors = ['#f0d060','#c9a030','#d9c9a8','#f0d060','#c8a0e0','#f8f0c0'];
+  for(let i=0;i<70;i++){
+    const s=document.createElement('span');
+    const sz=(Math.random()*1.2+0.5).toFixed(2);
+    const glyph=glyphs[Math.floor(Math.random()*glyphs.length)];
+    const col=colors[Math.floor(Math.random()*colors.length)];
+    s.textContent=glyph;
+    s.style.cssText=`top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*5}s;--delay:-${Math.random()*7}s;--sz:${sz}rem;--col:${col};`;
+    sf.appendChild(s);
+  }
+})();
+
+/* ═══════════════════════════════════════
+   VOCABULARY
+═══════════════════════════════════════ */
 const VOCABULARY = {
   easy: [
-    { en: 'cat',  jp: 'ねこ',     emoji: '🐱', category: 'animals' },
-    { en: 'dog',  jp: 'いぬ',     emoji: '🐕', category: 'animals' },
-    { en: 'sun',  jp: 'たいよう', emoji: '☀️', category: 'nature' },
-    { en: 'sea',  jp: 'うみ',     emoji: '🌊', category: 'nature' },
-    { en: 'sky',  jp: 'そら',     emoji: '🌤️', category: 'nature' },
-    { en: 'egg',  jp: 'たまご',   emoji: '🥚', category: 'food' },
-    { en: 'car',  jp: 'くるま',   emoji: '🚗', category: 'things' },
-    { en: 'hat',  jp: 'ぼうし',   emoji: '🎩', category: 'things' },
-    { en: 'pen',  jp: 'ペン',     emoji: '🖊️', category: 'things' },
-    { en: 'cup',  jp: 'カップ',   emoji: '☕', category: 'things' },
-    { en: 'bed',  jp: 'ベッド',   emoji: '🛏️', category: 'things' },
-    { en: 'box',  jp: 'はこ',     emoji: '📦', category: 'things' },
-    { en: 'red',  jp: 'あか',     emoji: '🔴', category: 'colors' },
-    { en: 'eye',  jp: 'め',       emoji: '👁️', category: 'body' },
-    { en: 'ear',  jp: 'みみ',     emoji: '👂', category: 'body' },
-    { en: 'leg',  jp: 'あし',     emoji: '🦵', category: 'body' },
-    { en: 'arm',  jp: 'うで',     emoji: '💪', category: 'body' },
-    { en: 'hero', jp: 'ヒーロー', emoji: '🦸', category: 'fantasy' }
+    { en:'cat',  jp:'ねこ',     emoji:'🐱', category:'animals' },
+    { en:'dog',  jp:'いぬ',     emoji:'🐕', category:'animals' },
+    { en:'sun',  jp:'たいよう', emoji:'☀️', category:'nature' },
+    { en:'sea',  jp:'うみ',     emoji:'🌊', category:'nature' },
+    { en:'sky',  jp:'そら',     emoji:'🌤️', category:'nature' },
+    { en:'egg',  jp:'たまご',   emoji:'🥚', category:'food' },
+    { en:'car',  jp:'くるま',   emoji:'🚗', category:'things' },
+    { en:'hat',  jp:'ぼうし',   emoji:'🎩', category:'things' },
+    { en:'pen',  jp:'ペン',     emoji:'🖊️', category:'things' },
+    { en:'cup',  jp:'カップ',   emoji:'☕', category:'things' },
+    { en:'bed',  jp:'ベッド',   emoji:'🛏️', category:'things' },
+    { en:'box',  jp:'はこ',     emoji:'📦', category:'things' },
+    { en:'red',  jp:'あか',     emoji:'🔴', category:'colors' },
+    { en:'eye',  jp:'め',       emoji:'👁️', category:'body' },
+    { en:'ear',  jp:'みみ',     emoji:'👂', category:'body' },
+    { en:'leg',  jp:'あし',     emoji:'🦵', category:'body' },
+    { en:'arm',  jp:'うで',     emoji:'💪', category:'body' },
+    { en:'hero', jp:'ヒーロー', emoji:'🦸', category:'fantasy' }
   ],
   medium: [
-    { en: 'apple', jp: 'りんご',      emoji: '🍎', category: 'food' },
-    { en: 'food',  jp: 'たべもの',    emoji: '🍱', category: 'food' },
-    { en: 'cake',  jp: 'ケーキ',      emoji: '🎂', category: 'food' },
-    { en: 'milk',  jp: 'ぎゅうにゅう', emoji: '🥛', category: 'food' },
-    { en: 'bird',  jp: 'とり',        emoji: '🐦', category: 'animals' },
-    { en: 'fish',  jp: 'さかな',      emoji: '🐟', category: 'animals' },
-    { en: 'moon',  jp: 'つき',        emoji: '🌙', category: 'nature' },
-    { en: 'star',  jp: 'ほし',        emoji: '⭐', category: 'nature' },
-    { en: 'tree',  jp: 'き',          emoji: '🌳', category: 'nature' },
-    { en: 'rain',  jp: 'あめ',        emoji: '🌧️', category: 'nature' },
-    { en: 'snow',  jp: 'ゆき',        emoji: '❄️', category: 'nature' },
-    { en: 'water', jp: 'みず',        emoji: '💧', category: 'nature' },
-    { en: 'book',  jp: 'ほん',        emoji: '📖', category: 'things' },
-    { en: 'music', jp: 'おんがく',    emoji: '🎵', category: 'things' },
-    { en: 'hand',  jp: 'て',          emoji: '✋', category: 'body' },
-    { en: 'blue',  jp: 'あお',        emoji: '🔵', category: 'colors' },
-    { en: 'pink',  jp: 'ピンク',      emoji: '🩷', category: 'colors' },
-    { en: 'green', jp: 'みどり',      emoji: '🟢', category: 'colors' },
-    { en: 'white', jp: 'しろ',        emoji: '⚪', category: 'colors' },
-    { en: 'black', jp: 'くろ',        emoji: '⚫', category: 'colors' },
-    { en: 'magic', jp: 'まほう',      emoji: '✨', category: 'fantasy' },
-    { en: 'king',  jp: 'おうさま',    emoji: '🤴', category: 'people' }
+    { en:'apple', jp:'りんご',       emoji:'🍎', category:'food' },
+    { en:'food',  jp:'たべもの',     emoji:'🍱', category:'food' },
+    { en:'cake',  jp:'ケーキ',       emoji:'🎂', category:'food' },
+    { en:'milk',  jp:'ぎゅうにゅう', emoji:'🥛', category:'food' },
+    { en:'bird',  jp:'とり',         emoji:'🐦', category:'animals' },
+    { en:'fish',  jp:'さかな',       emoji:'🐟', category:'animals' },
+    { en:'moon',  jp:'つき',         emoji:'🌙', category:'nature' },
+    { en:'star',  jp:'ほし',         emoji:'⭐', category:'nature' },
+    { en:'tree',  jp:'き',           emoji:'🌳', category:'nature' },
+    { en:'rain',  jp:'あめ',         emoji:'🌧️', category:'nature' },
+    { en:'snow',  jp:'ゆき',         emoji:'❄️', category:'nature' },
+    { en:'water', jp:'みず',         emoji:'💧', category:'nature' },
+    { en:'book',  jp:'ほん',         emoji:'📖', category:'things' },
+    { en:'music', jp:'おんがく',     emoji:'🎵', category:'things' },
+    { en:'hand',  jp:'て',           emoji:'✋', category:'body' },
+    { en:'blue',  jp:'あお',         emoji:'🔵', category:'colors' },
+    { en:'pink',  jp:'ピンク',       emoji:'🩷', category:'colors' },
+    { en:'green', jp:'みどり',       emoji:'🟢', category:'colors' },
+    { en:'white', jp:'しろ',         emoji:'⚪', category:'colors' },
+    { en:'black', jp:'くろ',         emoji:'⚫', category:'colors' },
+    { en:'magic', jp:'まほう',       emoji:'✨', category:'fantasy' },
+    { en:'king',  jp:'おうさま',     emoji:'🤴', category:'people' }
   ],
   hard: [
-    { en: 'rabbit',    jp: 'うさぎ',    emoji: '🐰', category: 'animals' },
-    { en: 'monkey',    jp: 'さる',      emoji: '🐵', category: 'animals' },
-    { en: 'banana',    jp: 'バナナ',    emoji: '🍌', category: 'food' },
-    { en: 'orange',    jp: 'オレンジ',  emoji: '🍊', category: 'food' },
-    { en: 'flower',    jp: 'はな',      emoji: '🌸', category: 'nature' },
-    { en: 'forest',    jp: 'もり',      emoji: '🌲', category: 'nature' },
-    { en: 'mountain',  jp: 'やま',      emoji: '🏔️', category: 'nature' },
-    { en: 'school',    jp: 'がっこう',  emoji: '🏫', category: 'places' },
-    { en: 'castle',    jp: 'おしろ',    emoji: '🏰', category: 'places' },
-    { en: 'window',    jp: 'まど',      emoji: '🪟', category: 'things' },
-    { en: 'rocket',    jp: 'ロケット',  emoji: '🚀', category: 'things' },
-    { en: 'sports',    jp: 'スポーツ',  emoji: '⚽', category: 'things' },
-    { en: 'yellow',    jp: 'きいろ',    emoji: '💛', category: 'colors' },
-    { en: 'purple',    jp: 'むらさき',  emoji: '💜', category: 'colors' },
-    { en: 'summer',    jp: 'なつ',      emoji: '🌻', category: 'seasons' },
-    { en: 'winter',    jp: 'ふゆ',      emoji: '⛄', category: 'seasons' },
-    { en: 'family',    jp: 'かぞく',    emoji: '👨‍👩‍👧', category: 'people' },
-    { en: 'friends',   jp: 'ともだち',  emoji: '👫', category: 'people' },
-    { en: 'teacher',   jp: 'せんせい',  emoji: '👩‍🏫', category: 'people' },
-    { en: 'crystal',   jp: 'クリスタル', emoji: '💎', category: 'fantasy' },
-    { en: 'courage',   jp: 'ゆうき',    emoji: '🌟', category: 'fantasy' },
-    { en: 'dragon',    jp: 'ドラゴン',  emoji: '🐲', category: 'fantasy' },
-    { en: 'adventure', jp: 'ぼうけん',  emoji: '🗺️', category: 'fantasy' }
+    { en:'rabbit',    jp:'うさぎ',     emoji:'🐰', category:'animals' },
+    { en:'monkey',    jp:'さる',       emoji:'🐵', category:'animals' },
+    { en:'banana',    jp:'バナナ',     emoji:'🍌', category:'food' },
+    { en:'orange',    jp:'オレンジ',   emoji:'🍊', category:'food' },
+    { en:'flower',    jp:'はな',       emoji:'🌸', category:'nature' },
+    { en:'forest',    jp:'もり',       emoji:'🌲', category:'nature' },
+    { en:'mountain',  jp:'やま',       emoji:'🏔️', category:'nature' },
+    { en:'school',    jp:'がっこう',   emoji:'🏫', category:'places' },
+    { en:'castle',    jp:'おしろ',     emoji:'🏰', category:'places' },
+    { en:'window',    jp:'まど',       emoji:'🪟', category:'things' },
+    { en:'rocket',    jp:'ロケット',   emoji:'🚀', category:'things' },
+    { en:'sports',    jp:'スポーツ',   emoji:'⚽', category:'things' },
+    { en:'yellow',    jp:'きいろ',     emoji:'💛', category:'colors' },
+    { en:'purple',    jp:'むらさき',   emoji:'💜', category:'colors' },
+    { en:'summer',    jp:'なつ',       emoji:'🌻', category:'seasons' },
+    { en:'winter',    jp:'ふゆ',       emoji:'⛄', category:'seasons' },
+    { en:'family',    jp:'かぞく',     emoji:'👨‍👩‍👧', category:'people' },
+    { en:'friends',   jp:'ともだち',   emoji:'👫', category:'people' },
+    { en:'teacher',   jp:'せんせい',   emoji:'👩‍🏫', category:'people' },
+    { en:'crystal',   jp:'クリスタル', emoji:'💎', category:'fantasy' },
+    { en:'courage',   jp:'ゆうき',     emoji:'🌟', category:'fantasy' },
+    { en:'dragon',    jp:'ドラゴン',   emoji:'🐲', category:'fantasy' },
+    { en:'adventure', jp:'ぼうけん',   emoji:'🗺️', category:'fantasy' }
   ]
 };
-// Game state
-const gameMode = 'challenge';
+
+/* ═══════════════════════════════════════
+   GAME STATE
+═══════════════════════════════════════ */
 let difficulty = 'easy';
 let questions = [];
 let currentQ = 0;
@@ -687,7 +748,6 @@ let mistakes = [];
 let hintShown = false;
 let lastDifficulty = 'easy';
 
-// SVG Drawing state
 let svg, strokesGroup, guideText;
 let paths = [];
 let currentPath = null;
@@ -695,82 +755,41 @@ let isDrawing = false;
 let svgWidth = 0;
 let svgHeight = 0;
 
-// Line positions (proportional) - centered but compressed closer together
-const LINE_TOP = 0.20;   // Ascender line
-const LINE_MID = 0.38;   // x-height / midline  
-const LINE_BASE = 0.62;  // Baseline (stays the same)
-const LINE_DESC = 0.77;  // Descender line
-
+const LINE_TOP  = 0.20;
+const LINE_MID  = 0.38;
+const LINE_BASE = 0.62;
+const LINE_DESC = 0.77;
 const TIME_PER_Q = 30;
 const HINT_DELAY = 5;
-const MAX_LIVES = 3;
+const MAX_LIVES  = 3;
 
-// ===== INITIALIZATION =====
-function setupBackground() {
-  const stars = document.getElementById('stars');
-  for (let i = 0; i < 50; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    s.style.cssText = `
-      left: ${Math.random()*100}%;
-      top: ${Math.random()*100}%;
-      width: ${2+Math.random()*3}px;
-      height: ${2+Math.random()*3}px;
-      --dur: ${2+Math.random()*4}s;
-      animation-delay: ${Math.random()*5}s;
-    `;
-    stars.appendChild(s);
-  }
-
-  const crystals = ['💎','💜','⭐','✨'];
-  for (let i = 0; i < 8; i++) {
-    const c = document.createElement('div');
-    c.className = 'crystal';
-    c.textContent = crystals[Math.floor(Math.random()*crystals.length)];
-    c.style.cssText = `
-      left: ${10+Math.random()*80}%;
-      top: ${10+Math.random()*80}%;
-      --dur: ${3+Math.random()*4}s;
-      animation-delay: ${Math.random()*3}s;
-    `;
-    document.body.appendChild(c);
-  }
-}
-
+/* ═══════════════════════════════════════
+   SCREEN
+═══════════════════════════════════════ */
 function show(screenId) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(screenId).classList.add('active');
+  window.scrollTo(0,0);
 }
 
+/* ═══════════════════════════════════════
+   GAME FLOW
+═══════════════════════════════════════ */
 function startGame(diff) {
   difficulty = diff;
   lastDifficulty = diff;
-  
   const pool = [...VOCABULARY[diff]];
-  const count = 10;
   questions = [];
-  
-  for (let i = 0; i < count && pool.length > 0; i++) {
+  for (let i = 0; i < 10 && pool.length > 0; i++) {
     const idx = Math.floor(Math.random() * pool.length);
     questions.push(pool.splice(idx, 1)[0]);
   }
-
-  currentQ = 0;
-  score = 0;
-  lives = MAX_LIVES;
-  mistakes = [];
-  
+  currentQ = 0; score = 0; lives = MAX_LIVES; mistakes = [];
   document.getElementById('score').textContent = score;
   updateLives();
   setupProgressDots();
-  
   show('screen-game');
-  
-  // Setup SVG after screen is visible
-  setTimeout(() => {
-    setupSVG();
-    loadQuestion();
-  }, 50);
+  setTimeout(() => { setupSVG(); loadQuestion(); }, 50);
 }
 
 function setupProgressDots() {
@@ -786,41 +805,26 @@ function setupProgressDots() {
 
 function updateDot(idx, state) {
   const dot = document.getElementById(`dot-${idx}`);
-  if (!dot) return;
-  dot.className = 'dot ' + state;
+  if (dot) dot.className = 'dot ' + state;
 }
 
 function updateLives() {
-  const container = document.getElementById('lives');
-  const hearts = Array.from({length: MAX_LIVES}, (_, i) => 
-    i < lives ? '❤️' : '🖤'
-  ).join('');
-  container.textContent = hearts;
+  document.getElementById('lives').textContent =
+    Array.from({length:MAX_LIVES},(_,i)=>i<lives?'❤️':'🖤').join('');
 }
 
-// ===== SVG SETUP =====
+/* ═══════════════════════════════════════
+   SVG SETUP (unchanged from original)
+═══════════════════════════════════════ */
 function setupSVG() {
   svg = document.getElementById('drawing-svg');
   strokesGroup = document.getElementById('strokes-group');
   guideText = document.getElementById('guide-text');
-  
   const wrapper = svg.parentElement;
   const rect = wrapper.getBoundingClientRect();
-  svgWidth = rect.width;
-  svgHeight = rect.height;
-  
-  svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
-  
+  svgWidth = rect.width; svgHeight = rect.height;
+  svg.setAttribute('viewBox',`0 0 ${svgWidth} ${svgHeight}`);
   drawGuideLines();
-  
-  // Remove old listeners
-  svg.onpointerdown = null;
-  svg.onpointermove = null;
-  svg.onpointerup = null;
-  svg.onpointercancel = null;
-  svg.onpointerleave = null;
-  
-  // Add pointer event listeners
   svg.onpointerdown = startDraw;
   svg.onpointermove = continueDraw;
   svg.onpointerup = endDraw;
@@ -831,65 +835,38 @@ function setupSVG() {
 function drawGuideLines() {
   const guidesGroup = svg.querySelector('.guide-lines');
   guidesGroup.innerHTML = '';
-  
-  const h = svgHeight;
-  const w = svgWidth;
-  
-  // Equal spacing between lines for cleaner look
-  // Top, Middle (dashed), Baseline, Descender
+  const h = svgHeight, w = svgWidth;
   const lines = [
-    { y: h * LINE_TOP, color: '#7cb3d9', width: 2 },
-    { y: h * LINE_MID, color: '#9bc5e3', width: 1.5, dash: '8,6' },
-    { y: h * LINE_BASE, color: '#e07070', width: 2.5 },
-    { y: h * LINE_DESC, color: '#7cb3d9', width: 2 }
+    { y:h*LINE_TOP,  color:'#7cb3d9', width:2 },
+    { y:h*LINE_MID,  color:'#9bc5e3', width:1.5, dash:'8,6' },
+    { y:h*LINE_BASE, color:'#e07070', width:2.5 },
+    { y:h*LINE_DESC, color:'#7cb3d9', width:2 }
   ];
-  
   lines.forEach(line => {
-    const el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    el.setAttribute('x1', '0');
-    el.setAttribute('y1', line.y);
-    el.setAttribute('x2', w);
-    el.setAttribute('y2', line.y);
-    el.setAttribute('stroke', line.color);
-    el.setAttribute('stroke-width', line.width);
-    el.setAttribute('stroke-linecap', 'round');
-    if (line.dash) {
-      el.setAttribute('stroke-dasharray', line.dash);
-    }
+    const el = document.createElementNS('http://www.w3.org/2000/svg','line');
+    el.setAttribute('x1','0'); el.setAttribute('y1',line.y);
+    el.setAttribute('x2',w);  el.setAttribute('y2',line.y);
+    el.setAttribute('stroke',line.color);
+    el.setAttribute('stroke-width',line.width);
+    el.setAttribute('stroke-linecap','round');
+    if (line.dash) el.setAttribute('stroke-dasharray',line.dash);
     guidesGroup.appendChild(el);
   });
 }
 
 function updateGuideTextSize() {
-  // Comic Relief (Comic Sans style) has a large x-height, roughly 55% of em
-  // We want lowercase letters to sit between the middle dotted line and baseline
-  
-  const topLineY = svgHeight * LINE_TOP;       // 0.30 - ascender line
-  const midLineY = svgHeight * LINE_MID;       // 0.42 - x-height / midline
-  const baseLineY = svgHeight * LINE_BASE;     // 0.62 - baseline
-  
-  // The x-height zone (where lowercase body sits)
-  const xHeightZone = baseLineY - midLineY;  // 0.20 of height
-  
-  // Base font size
+  const baseLineY = svgHeight * LINE_BASE;
+  const midLineY  = svgHeight * LINE_MID;
+  const xHeightZone = baseLineY - midLineY;
   let fontSize = xHeightZone / 0.45;
-
-  // Scale down for longer words so they fit within the canvas width
-  // Each letter needs roughly fontSize * 0.62px (Comic Relief character width ratio)
   const word = questions[currentQ] ? questions[currentQ].en : '';
   const estimatedWidth = word.length * fontSize * 0.62;
-  const availableWidth = svgWidth * 0.88; // leave a little padding on each side
-  if (estimatedWidth > availableWidth) {
-    fontSize = fontSize * (availableWidth / estimatedWidth);
-  }
-  
+  const availableWidth = svgWidth * 0.88;
+  if (estimatedWidth > availableWidth) fontSize = fontSize * (availableWidth / estimatedWidth);
   guideText.style.fontSize = fontSize + 'px';
   guideText.style.lineHeight = '1';
-  
-  // Position text so baseline aligns with baseline guide
   const baselineOffset = fontSize * 0.85;
   const topPosition = baseLineY - baselineOffset;
-  
   guideText.style.position = 'absolute';
   guideText.style.top = topPosition + 'px';
   guideText.style.left = '0';
@@ -902,156 +879,108 @@ function updateGuideTextSize() {
 
 function getPointerPos(e) {
   const rect = svg.getBoundingClientRect();
-  const x = (e.clientX - rect.left) * (svgWidth / rect.width);
-  const y = (e.clientY - rect.top) * (svgHeight / rect.height);
-  return { x, y };
+  return {
+    x: (e.clientX - rect.left) * (svgWidth / rect.width),
+    y: (e.clientY - rect.top)  * (svgHeight / rect.height)
+  };
 }
 
 function startDraw(e) {
-  e.preventDefault();
-  isDrawing = true;
+  e.preventDefault(); isDrawing = true;
   svg.setPointerCapture(e.pointerId);
-  
   const pos = getPointerPos(e);
-  
-  currentPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  currentPath = document.createElementNS('http://www.w3.org/2000/svg','path');
   currentPath.classList.add('drawing-path');
-  currentPath.setAttribute('d', `M ${pos.x} ${pos.y}`);
+  currentPath.setAttribute('d',`M ${pos.x} ${pos.y}`);
   strokesGroup.appendChild(currentPath);
-  
-  paths.push({ element: currentPath, points: [pos] });
+  paths.push({ element:currentPath, points:[pos] });
 }
 
 function continueDraw(e) {
   if (!isDrawing || !currentPath) return;
   e.preventDefault();
-  
   const pos = getPointerPos(e);
-  const pathData = paths[paths.length - 1];
-  pathData.points.push(pos);
-  
-  const d = currentPath.getAttribute('d') + ` L ${pos.x} ${pos.y}`;
-  currentPath.setAttribute('d', d);
+  paths[paths.length-1].points.push(pos);
+  currentPath.setAttribute('d', currentPath.getAttribute('d') + ` L ${pos.x} ${pos.y}`);
 }
 
 function endDraw(e) {
-  if (isDrawing && e) {
-    try { svg.releasePointerCapture(e.pointerId); } catch(err) {}
-  }
-  isDrawing = false;
-  currentPath = null;
+  if (isDrawing && e) { try { svg.releasePointerCapture(e.pointerId); } catch(err){} }
+  isDrawing = false; currentPath = null;
 }
 
 function clearDrawing() {
-  strokesGroup.innerHTML = '';
-  paths = [];
-  guideText.classList.remove('visible');
-  hintShown = false;
+  strokesGroup.innerHTML = ''; paths = [];
+  guideText.classList.remove('visible'); hintShown = false;
 }
 
 function undoStroke() {
   if (paths.length === 0) return;
   const removed = paths.pop();
-  if (removed.element && removed.element.parentNode) {
-    removed.element.parentNode.removeChild(removed.element);
-  }
+  if (removed.element && removed.element.parentNode) removed.element.parentNode.removeChild(removed.element);
 }
 
-function showHint() {
-  guideText.classList.add('visible');
-  hintShown = true;
-}
+function showHint() { guideText.classList.add('visible'); hintShown = true; }
 
-// ===== GAME FLOW =====
+/* ═══════════════════════════════════════
+   QUESTION LOADING
+═══════════════════════════════════════ */
 function loadQuestion() {
-  if (currentQ >= questions.length) {
-    endGame();
-    return;
-  }
-  
+  if (currentQ >= questions.length) { endGame(); return; }
   const q = questions[currentQ];
   document.getElementById('jp-hint').textContent = q.jp;
   document.getElementById('hint-emoji').textContent = q.emoji;
   document.getElementById('category').textContent = q.category.toUpperCase();
   guideText.textContent = q.en;
   guideText.classList.remove('visible');
-  
   clearDrawing();
   updateGuideTextSize();
   document.getElementById('feedback').textContent = '';
   document.getElementById('feedback').className = 'feedback';
-  
-  updateDot(currentQ, 'current');
-  
+  updateDot(currentQ,'current');
   hintShown = false;
   startTimer();
 }
 
 function startTimer() {
-  clearInterval(timerInterval);
-  timer = TIME_PER_Q;
+  clearInterval(timerInterval); timer = TIME_PER_Q;
   updateTimerDisplay();
-  
   timerInterval = setInterval(() => {
     timer--;
     updateTimerDisplay();
-    
-    if (timer === HINT_DELAY && !hintShown) {
-      showHint();
-    }
-    
-    if (timer <= 5 && timer > 0) {
-      sfxTimerWarn();
-    }
-    
-    if (timer <= 0) {
-      clearInterval(timerInterval);
-      timeUp();
-    }
+    if (timer === HINT_DELAY && !hintShown) showHint();
+    if (timer <= 5 && timer > 0) sfxTimerWarn();
+    if (timer <= 0) { clearInterval(timerInterval); timeUp(); }
   }, 1000);
 }
 
 function updateTimerDisplay() {
   const el = document.getElementById('timer-num');
   el.textContent = timer;
-  if (timer <= 5) {
-    el.classList.add('low');
-  } else {
-    el.classList.remove('low');
-  }
+  el.classList.toggle('low', timer <= 5);
 }
 
 function timeUp() {
   sfxWrong();
-  showFeedback('⏰ Time\'s up! / 時間切れ！ → ' + questions[currentQ].en, false);
-  recordMistake();
-  loseLife();
-  updateDot(currentQ, 'wrong-dot');
+  showFeedback('⏰ Time\'s up! → ' + questions[currentQ].en, false);
+  recordMistake(); loseLife();
+  updateDot(currentQ,'wrong-dot');
   setTimeout(nextQuestion, 2000);
 }
 
-// ===== VALIDATION (WITH PER-LETTER STROKE COUNTS) =====
-
-// Expected stroke counts for each letter (based on standard handwriting)
-// These are MINIMUM strokes - kids might use more and that's fine
+/* ═══════════════════════════════════════
+   STROKE VALIDATION (unchanged)
+═══════════════════════════════════════ */
 const STROKE_COUNTS = {
-  // Lowercase - most are 1-2 strokes
-  'a': 1, 'b': 1, 'c': 1, 'd': 1, 'e': 1, 'f': 2, 'g': 1, 'h': 1,
-  'i': 2, 'j': 2, 'k': 2, 'l': 1, 'm': 1, 'n': 1, 'o': 1, 'p': 1,
-  'q': 1, 'r': 1, 's': 1, 't': 2, 'u': 1, 'v': 1, 'w': 1, 'x': 2,
-  'y': 1, 'z': 1,
-  // Uppercase - adjusted based on how they can actually be written
-  'A': 3, 'B': 2, 'C': 1, 'D': 2, 'E': 4, 'F': 3, 'G': 2, 'H': 3,
-  'I': 3, 'J': 1, 'K': 3, 'L': 1, 'M': 2, 'N': 2, 'O': 1, 'P': 2,
-  'Q': 2, 'R': 2, 'S': 1, 'T': 2, 'U': 1, 'V': 2, 'W': 1, 'X': 2,
-  'Y': 2, 'Z': 1
+  'a':1,'b':1,'c':1,'d':1,'e':1,'f':2,'g':1,'h':1,'i':2,'j':2,'k':2,'l':1,'m':1,'n':1,'o':1,'p':1,
+  'q':1,'r':1,'s':1,'t':2,'u':1,'v':1,'w':1,'x':2,'y':1,'z':1,
+  'A':3,'B':2,'C':1,'D':2,'E':4,'F':3,'G':2,'H':3,'I':3,'J':1,'K':3,'L':1,'M':2,'N':2,'O':1,'P':2,
+  'Q':2,'R':2,'S':1,'T':2,'U':1,'V':2,'W':1,'X':2,'Y':2,'Z':1
 };
 
 function getExpectedStrokes(word) {
   let total = 0;
-  for (const char of word) {
-    total += STROKE_COUNTS[char] || 1;
-  }
+  for (const char of word) total += STROKE_COUNTS[char] || 1;
   return total;
 }
 
@@ -1059,275 +988,123 @@ function analyzeStrokes() {
   const word = questions[currentQ].en;
   const expectedLetters = word.length;
   const expectedStrokes = getExpectedStrokes(word);
-  
-  let totalPoints = 0;
-  let totalLength = 0;
-  let strokeCount = paths.length;
-  let boundingBox = { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity };
-  
-  // Stroke analysis
-  let totalVerticalMovement = 0;
-  let totalHorizontalMovement = 0;
-  let directionChanges = 0;
-  let strokesWithGoodShape = 0;
-  let strokeBoundingBoxes = [];
-  
+  let totalLength=0, strokeCount=paths.length;
+  let boundingBox={minX:Infinity,maxX:-Infinity,minY:Infinity,maxY:-Infinity};
+  let totalVerticalMovement=0, totalHorizontalMovement=0, directionChanges=0, strokesWithGoodShape=0;
+  let strokeBoundingBoxes=[];
+
   paths.forEach(path => {
     if (path.points.length < 2) return;
-    
-    totalPoints += path.points.length;
-    
-    let strokeMinX = Infinity, strokeMaxX = -Infinity;
-    let strokeMinY = Infinity, strokeMaxY = -Infinity;
-    let strokeVertical = 0;
-    let strokeHorizontal = 0;
-    let lastDirX = 0, lastDirY = 0;
-    let strokeDirChanges = 0;
-    
-    for (let i = 0; i < path.points.length; i++) {
-      const pt = path.points[i];
-      
-      boundingBox.minX = Math.min(boundingBox.minX, pt.x);
-      boundingBox.maxX = Math.max(boundingBox.maxX, pt.x);
-      boundingBox.minY = Math.min(boundingBox.minY, pt.y);
-      boundingBox.maxY = Math.max(boundingBox.maxY, pt.y);
-      
-      strokeMinX = Math.min(strokeMinX, pt.x);
-      strokeMaxX = Math.max(strokeMaxX, pt.x);
-      strokeMinY = Math.min(strokeMinY, pt.y);
-      strokeMaxY = Math.max(strokeMaxY, pt.y);
-      
-      if (i > 0) {
-        const prev = path.points[i - 1];
-        const dx = pt.x - prev.x;
-        const dy = pt.y - prev.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        totalLength += dist;
-        
-        strokeVertical += Math.abs(dy);
-        strokeHorizontal += Math.abs(dx);
-        totalVerticalMovement += Math.abs(dy);
-        totalHorizontalMovement += Math.abs(dx);
-        
-        if (dist > 4) {
-          const dirX = Math.sign(dx);
-          const dirY = Math.sign(dy);
-          if ((lastDirX !== 0 && dirX !== 0 && dirX !== lastDirX) ||
-              (lastDirY !== 0 && dirY !== 0 && dirY !== lastDirY)) {
-            strokeDirChanges++;
-          }
-          if (dirX !== 0) lastDirX = dirX;
-          if (dirY !== 0) lastDirY = dirY;
+    let sMinX=Infinity,sMaxX=-Infinity,sMinY=Infinity,sMaxY=-Infinity;
+    let sVert=0,sHoriz=0,lastDirX=0,lastDirY=0,sDirChanges=0;
+    for (let i=0;i<path.points.length;i++) {
+      const pt=path.points[i];
+      boundingBox.minX=Math.min(boundingBox.minX,pt.x); boundingBox.maxX=Math.max(boundingBox.maxX,pt.x);
+      boundingBox.minY=Math.min(boundingBox.minY,pt.y); boundingBox.maxY=Math.max(boundingBox.maxY,pt.y);
+      sMinX=Math.min(sMinX,pt.x); sMaxX=Math.max(sMaxX,pt.x);
+      sMinY=Math.min(sMinY,pt.y); sMaxY=Math.max(sMaxY,pt.y);
+      if (i>0) {
+        const prev=path.points[i-1];
+        const dx=pt.x-prev.x, dy=pt.y-prev.y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        totalLength+=dist; sVert+=Math.abs(dy); sHoriz+=Math.abs(dx);
+        totalVerticalMovement+=Math.abs(dy); totalHorizontalMovement+=Math.abs(dx);
+        if (dist>4) {
+          const dX=Math.sign(dx),dY=Math.sign(dy);
+          if ((lastDirX!==0&&dX!==0&&dX!==lastDirX)||(lastDirY!==0&&dY!==0&&dY!==lastDirY)) sDirChanges++;
+          if (dX!==0) lastDirX=dX; if (dY!==0) lastDirY=dY;
         }
       }
     }
-    
-    directionChanges += strokeDirChanges;
-    
-    const strokeHeight = strokeMaxY - strokeMinY;
-    const strokeWidth = strokeMaxX - strokeMinX;
-    
-    // A "good" stroke has some substance (not just a tiny dot or pure horizontal)
-    const hasGoodSize = strokeHeight > 8 || strokeWidth > 8;
-    const hasVerticalComponent = strokeHeight > 5 || strokeHeight > strokeWidth * 0.25;
-    if (hasGoodSize && hasVerticalComponent) {
-      strokesWithGoodShape++;
-    }
-    
-    strokeBoundingBoxes.push({
-      minX: strokeMinX, maxX: strokeMaxX,
-      minY: strokeMinY, maxY: strokeMaxY,
-      width: strokeWidth, height: strokeHeight
-    });
+    directionChanges+=sDirChanges;
+    const sH=sMaxY-sMinY, sW=sMaxX-sMinX;
+    if ((sH>8||sW>8)&&(sH>5||sH>sW*0.25)) strokesWithGoodShape++;
+    strokeBoundingBoxes.push({minX:sMinX,maxX:sMaxX,minY:sMinY,maxY:sMaxY,width:sW,height:sH});
   });
-  
-  const drawingWidth = boundingBox.maxX - boundingBox.minX;
-  const drawingHeight = boundingBox.maxY - boundingBox.minY;
-  
-  // STRICT writing zone check - drawing must actually be ON the lines
-  const lineTop = svgHeight * LINE_TOP;
-  const lineMid = svgHeight * LINE_MID;
-  const lineBase = svgHeight * LINE_BASE;
-  const lineDesc = svgHeight * LINE_DESC;
-  
-  // The valid writing zone is from slightly above top line to slightly below descender
-  const zoneTop = lineTop - (lineBase - lineTop) * 0.2;  // Allow 20% above top line
-  const zoneBottom = lineDesc + (lineDesc - lineBase) * 0.3; // Allow 30% below descender
-  
-  // Drawing center must be in the main writing zone (between top and baseline)
-  const drawingCenterY = (boundingBox.minY + boundingBox.maxY) / 2;
-  const mainZoneCenter = (lineTop + lineBase) / 2;
-  
-  // Check multiple conditions:
-  // 1. Drawing center must be near the middle of the writing zone
-  // 2. Most of the drawing must be within the zone
-  // 3. Drawing must overlap with the actual line area
-  const centerInZone = drawingCenterY >= lineTop * 0.8 && drawingCenterY <= lineDesc * 1.1;
-  const topInZone = boundingBox.minY >= zoneTop;
-  const bottomInZone = boundingBox.maxY <= zoneBottom;
-  const overlapsLines = boundingBox.maxY >= lineMid && boundingBox.minY <= lineBase;
-  
-  const isInWritingZone = centerInZone && overlapsLines && (topInZone || bottomInZone);
-  
-  // Check coverage across the word width
-  let coveredSegments = 0;
-  const segmentWidth = drawingWidth / expectedLetters;
-  for (let i = 0; i < expectedLetters; i++) {
-    const segStart = boundingBox.minX + i * segmentWidth;
-    const segEnd = segStart + segmentWidth;
-    const hasStroke = strokeBoundingBoxes.some(bb => 
-      bb.maxX >= segStart && bb.minX <= segEnd
-    );
-    if (hasStroke) coveredSegments++;
+
+  const drawingWidth=boundingBox.maxX-boundingBox.minX, drawingHeight=boundingBox.maxY-boundingBox.minY;
+  const lineTop=svgHeight*LINE_TOP, lineMid=svgHeight*LINE_MID, lineBase=svgHeight*LINE_BASE, lineDesc=svgHeight*LINE_DESC;
+  const zoneTop=lineTop-(lineBase-lineTop)*0.2, zoneBottom=lineDesc+(lineDesc-lineBase)*0.3;
+  const drawingCenterY=(boundingBox.minY+boundingBox.maxY)/2;
+  const centerInZone=drawingCenterY>=lineTop*0.8&&drawingCenterY<=lineDesc*1.1;
+  const topInZone=boundingBox.minY>=zoneTop, bottomInZone=boundingBox.maxY<=zoneBottom;
+  const overlapsLines=boundingBox.maxY>=lineMid&&boundingBox.minY<=lineBase;
+  const isInWritingZone=centerInZone&&overlapsLines&&(topInZone||bottomInZone);
+
+  let coveredSegments=0;
+  const segmentWidth=drawingWidth/expectedLetters;
+  for (let i=0;i<expectedLetters;i++) {
+    const segStart=boundingBox.minX+i*segmentWidth, segEnd=segStart+segmentWidth;
+    if (strokeBoundingBoxes.some(bb=>bb.maxX>=segStart&&bb.minX<=segEnd)) coveredSegments++;
   }
-  
-  const verticalRatio = totalHorizontalMovement > 0 ? 
-    totalVerticalMovement / totalHorizontalMovement : 0;
-  const coverageRatio = coveredSegments / expectedLetters;
-  
-  // Calculate width per letter - if you write "fish" for "family", the width per letter will be wrong
-  const actualWidthPerLetter = drawingWidth / expectedLetters;
-  const expectedWidthPerLetter = svgWidth * 0.08; // Each letter should be roughly 8% of canvas width
-  const widthPerLetterRatio = actualWidthPerLetter / expectedWidthPerLetter;
-  
-  // STRICTER requirements
-  const minStrokes = Math.max(Math.floor(expectedStrokes * 0.75), expectedLetters); // At least 75% of expected strokes
-  const minWidth = svgWidth * (0.07 * expectedLetters); // Need decent width per letter (increased from 0.06)
-  const minHeight = svgHeight * 0.18; // Must use a good portion of writing zone
-  const minVerticalRatio = 0.30; // At least 30% vertical movement
-  const minCoverage = 0.80; // Must cover 80% of letter positions (increased from 75%)
-  const minGoodStrokes = Math.max(Math.ceil(expectedLetters * 0.7), 3); // At least 70% good strokes, min 3
-  const minWidthPerLetterRatio = 0.7; // Width per letter must be at least 70% of expected
-  
+
+  const verticalRatio=totalHorizontalMovement>0?totalVerticalMovement/totalHorizontalMovement:0;
+  const coverageRatio=coveredSegments/expectedLetters;
+  const actualWidthPerLetter=drawingWidth/expectedLetters;
+  const expectedWidthPerLetter=svgWidth*0.08;
+  const widthPerLetterRatio=actualWidthPerLetter/expectedWidthPerLetter;
+
+  const minStrokes=Math.max(Math.floor(expectedStrokes*0.75),expectedLetters);
+  const minWidth=svgWidth*(0.07*expectedLetters);
+  const minHeight=svgHeight*0.18;
+
   return {
-    strokeCount,
-    expectedStrokes,
-    totalPoints,
-    totalLength,
-    drawingWidth,
-    drawingHeight,
-    verticalRatio,
-    directionChanges,
-    strokesWithGoodShape,
-    coverageRatio,
-    coveredSegments,
-    isInWritingZone,
-    widthPerLetterRatio,
+    strokeCount, expectedStrokes, drawingWidth, drawingHeight,
+    verticalRatio, strokesWithGoodShape, coverageRatio, isInWritingZone, widthPerLetterRatio,
     checks: {
-      hasEnoughStrokes: { 
-        pass: strokeCount >= minStrokes, 
-        msg: 'Write more strokes! / もっと線を書いて！' 
-      },
-      hasEnoughWidth: { 
-        pass: drawingWidth >= minWidth, 
-        msg: 'Space out your letters! / 文字を広げて！' 
-      },
-      hasEnoughHeight: { 
-        pass: drawingHeight >= minHeight, 
-        msg: 'Make your letters taller! / もっと大きく書いて！' 
-      },
-      hasVerticalMovement: { 
-        pass: verticalRatio >= minVerticalRatio, 
-        msg: 'Letters need up and down strokes! / 上下に線を書いて！' 
-      },
-      hasGoodCoverage: { 
-        pass: coverageRatio >= minCoverage, 
-        msg: 'Write all the letters! / 全部の文字を書いて！' 
-      },
-      hasGoodStrokes: { 
-        pass: strokesWithGoodShape >= minGoodStrokes, 
-        msg: 'Make your strokes clearer! / もっとはっきり書いて！' 
-      },
-      isInWritingZone: {
-        pass: isInWritingZone,
-        msg: 'Write on the lines! / 線の上に書いて！'
-      },
-      hasCorrectSpacing: {
-        pass: widthPerLetterRatio >= minWidthPerLetterRatio,
-        msg: 'Write all letters with proper spacing! / 文字の間隔を正しく！'
-      }
+      hasEnoughStrokes:   { pass:strokeCount>=minStrokes,            msg:'Write more strokes! / もっと線を書いて！' },
+      hasEnoughWidth:     { pass:drawingWidth>=minWidth,             msg:'Space out your letters! / 文字を広げて！' },
+      hasEnoughHeight:    { pass:drawingHeight>=minHeight,           msg:'Make your letters taller! / もっと大きく書いて！' },
+      hasVerticalMovement:{ pass:verticalRatio>=0.30,                msg:'Letters need up and down strokes! / 上下に線を書いて！' },
+      hasGoodCoverage:    { pass:coverageRatio>=0.80,                msg:'Write all the letters! / 全部の文字を書いて！' },
+      hasGoodStrokes:     { pass:strokesWithGoodShape>=Math.max(Math.ceil(expectedLetters*0.7),3), msg:'Make your strokes clearer! / もっとはっきり書いて！' },
+      isInWritingZone:    { pass:isInWritingZone,                    msg:'Write on the lines! / 線の上に書いて！' },
+      hasCorrectSpacing:  { pass:widthPerLetterRatio>=0.7,           msg:'Write all letters with proper spacing! / 文字の間隔を正しく！' }
     },
-    expected: expectedLetters,
-    minStrokes
+    expected:expectedLetters, minStrokes
   };
 }
 
 function submitAnswer() {
-  if (paths.length === 0) {
-    showFeedback('✍️ Write something first! / まず何か書いて！', false);
-    return;
-  }
-  
+  if (paths.length === 0) { showFeedback('✍️ Write something first! / まず何か書いて！', false); return; }
   clearInterval(timerInterval);
-  
   const q = questions[currentQ];
   const analysis = analyzeStrokes();
-  
-  // Get all checks
   const allChecks = Object.values(analysis.checks);
-  const passedChecks = allChecks.filter(c => c.pass);
   const failedChecks = allChecks.filter(c => !c.pass);
-  
-  // Must pass ALL 8 checks - no exceptions!
-  const passCount = passedChecks.length;
-  const isAccepted = passCount === 8;
-  
+  const isAccepted = failedChecks.length === 0;
+
   if (isAccepted) {
-    // Calculate points based on how well they did
-    let pts = Math.max(10, Math.floor(timer / TIME_PER_Q * 100));
-    
-    // Bonus for not using hint
-    if (!hintShown) {
-      pts += 20;
-    }
-    
+    let pts = Math.max(10, Math.floor(timer/TIME_PER_Q*100));
+    if (!hintShown) pts += 20;
     score += pts;
     document.getElementById('score').textContent = score;
-    
     sfxCorrect();
-    showFeedback('✅ Correct! / 正解！ +' + pts + 'pts', true);
-    spawnParticles(svg, ['⭐','✨','💎','🎉']);
-    updateDot(currentQ, 'done');
+    showFeedback('✅ Correct! / 正解！ +' + pts + ' pts', true);
+    spawnParticles(svg, ['⭐','✨','💎','✦']);
+    updateDot(currentQ,'done');
     setTimeout(nextQuestion, 1500);
   } else {
     sfxWrong();
-    
-    // Give specific feedback from the first failed check
-    const hint = failedChecks.length > 0 ? failedChecks[0].msg : 'Try again!';
-    
+    const hint = failedChecks[0].msg;
     showFeedback('❌ ' + q.en + ' — ' + hint, false);
-    recordMistake();
-    loseLife();
-    updateDot(currentQ, 'wrong-dot');
+    recordMistake(); loseLife();
+    updateDot(currentQ,'wrong-dot');
     setTimeout(nextQuestion, 2500);
   }
 }
 
-function recordMistake() {
-  mistakes.push({
-    jp: questions[currentQ].jp,
-    correct: questions[currentQ].en
-  });
-}
+function recordMistake() { mistakes.push({ jp:questions[currentQ].jp, correct:questions[currentQ].en }); }
 
 function loseLife() {
-  lives--;
-  updateLives();
-  
-  if (lives <= 0) {
-    clearInterval(timerInterval);
-    setTimeout(endGame, 1500);
-  }
+  lives--; updateLives();
+  if (lives <= 0) { clearInterval(timerInterval); setTimeout(endGame, 1500); }
 }
 
 function nextQuestion() {
   if (lives <= 0) return;
-  
   currentQ++;
-  if (currentQ >= questions.length) {
-    endGame();
-    return;
-  }
+  if (currentQ >= questions.length) { endGame(); return; }
   loadQuestion();
 }
 
@@ -1339,69 +1116,56 @@ function showFeedback(msg, ok) {
 
 function spawnParticles(el, symbols) {
   const rect = el.getBoundingClientRect();
-  const cx = rect.left + rect.width/2;
-  const cy = rect.top + rect.height/2;
-  
-  for (let i = 0; i < 8; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    p.textContent = symbols[Math.floor(Math.random()*symbols.length)];
-    const angle = (Math.PI*2*i/8) + Math.random()*0.5;
-    const dist = 60 + Math.random()*60;
-    p.style.cssText = `
-      left:${cx}px;
-      top:${cy}px;
-      --tx:${Math.cos(angle)*dist}px;
-      --ty:${Math.sin(angle)*dist}px;
-    `;
+  const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+  for (let i=0;i<8;i++) {
+    const p=document.createElement('div');
+    p.className='particle';
+    p.textContent=symbols[Math.floor(Math.random()*symbols.length)];
+    const a=(Math.PI*2*i/8)+Math.random()*0.5, d=60+Math.random()*60;
+    p.style.cssText=`left:${cx}px;top:${cy}px;--tx:${Math.cos(a)*d}px;--ty:${Math.sin(a)*d}px;`;
     document.body.appendChild(p);
-    setTimeout(() => p.remove(), 900);
+    setTimeout(()=>p.remove(),900);
   }
 }
 
-// ===== END GAME =====
+/* ═══════════════════════════════════════
+   END GAME
+═══════════════════════════════════════ */
 function endGame() {
   clearInterval(timerInterval);
   show('screen-result');
-  
-  // Reset stars
-  for (let i = 1; i <= 3; i++) {
-    document.getElementById(`star${i}`).classList.remove('lit');
-  }
-  
-  const maxScore = questions.length * 120; // Max with time bonus and no hints
+  for (let i=1;i<=3;i++) document.getElementById(`star${i}`).classList.remove('lit');
+  const maxScore = questions.length * 120;
   const pct = score / maxScore;
   document.getElementById('final-score').textContent = score;
-  
+
   let stars, emoji, cls, title, sub;
-  if (pct >= 0.6 || score >= questions.length * 80) {
-    stars = 3; emoji = '🏆'; cls = 'great';
-    title = "HERO'S PROOF!\nかんぺき！";
-    sub = "Amazing! You're a writing hero! / すごい！ライティングヒーロー！";
-  } else if (pct >= 0.35 || score >= questions.length * 40) {
-    stars = 2; emoji = '⚔️'; cls = 'good';
-    title = "GOOD JOB!\nよくできました！";
-    sub = "Great effort! Keep practicing! / がんばったね！もっと練習しよう！";
+  if (pct >= 0.6 || score >= questions.length*80) {
+    stars=3; emoji='🏆'; cls='great';
+    title="HERO'S PROOF!\nかんぺき！";
+    sub="Amazing! You're a writing hero! / すごい！ライティングヒーロー！";
+  } else if (pct >= 0.35 || score >= questions.length*40) {
+    stars=2; emoji='⚔️'; cls='good';
+    title="WELL DONE!\nよくできました！";
+    sub="Great effort! Keep practicing! / がんばったね！もっと練習しよう！";
   } else {
-    stars = 1; emoji = '💪'; cls = 'try';
-    title = "TRY AGAIN!\nもういちど！";
-    sub = "Don't give up! You can do it! / あきらめないで！できるよ！";
+    stars=1; emoji='💪'; cls='try';
+    title="TRY AGAIN!\nもういちど！";
+    sub="Don't give up! / あきらめないで！できるよ！";
   }
-  
+
   document.getElementById('result-emoji').textContent = emoji;
-  document.getElementById('result-title').textContent = title;
-  document.getElementById('result-title').className = 'result-title ' + cls;
+  const tEl = document.getElementById('result-title');
+  tEl.textContent = title; tEl.className = 'result-title ' + cls;
   document.getElementById('result-sub').textContent = sub;
-  
+
   sfxFanfare(stars);
   setTimeout(() => {
-    for (let i = 1; i <= 3; i++) {
-      if (i <= stars) {
-        setTimeout(() => document.getElementById(`star${i}`).classList.add('lit'), (i-1)*300);
-      }
+    for (let i=1;i<=3;i++) {
+      if (i<=stars) setTimeout(()=>document.getElementById(`star${i}`).classList.add('lit'),(i-1)*300);
     }
   }, 200);
-  
+
   if (mistakes.length > 0) {
     document.getElementById('mistakes-list').classList.remove('hidden');
     const body = document.getElementById('mistakes-body');
@@ -1409,11 +1173,7 @@ function endGame() {
     mistakes.forEach(m => {
       const div = document.createElement('div');
       div.className = 'mistake-item';
-      div.innerHTML = `
-        <span class="mistake-jp">${m.jp}</span>
-        <span class="mistake-arrow">→</span>
-        <span class="mistake-correct">${m.correct}</span>
-      `;
+      div.innerHTML = `<span class="mistake-jp">${m.jp}</span><span class="mistake-arrow"> → </span><span class="mistake-correct">${m.correct}</span>`;
       body.appendChild(div);
     });
   } else {
@@ -1421,72 +1181,48 @@ function endGame() {
   }
 }
 
-function goTitle() {
-  document.getElementById('mistakes-list').classList.add('hidden');
-  show('screen-title');
-}
-
 function retryGame() {
   document.getElementById('mistakes-list').classList.add('hidden');
   startGame(lastDifficulty);
 }
 
-// ===== SOUND EFFECTS =====
+/* ═══════════════════════════════════════
+   AUDIO
+═══════════════════════════════════════ */
 let audioCtx = null;
-function getCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  return audioCtx;
-}
-
-function playTone(freq, type, duration, vol=0.3) {
+function getCtx() { if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+function playTone(freq,type,duration,vol=0.28) {
   try {
-    const ctx = getCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, ctx.currentTime);
-    gain.gain.setValueAtTime(vol, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + duration);
-  } catch(e) {}
+    const ctx=getCtx(), osc=ctx.createOscillator(), gain=ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type=type; osc.frequency.setValueAtTime(freq,ctx.currentTime);
+    gain.gain.setValueAtTime(vol,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+duration);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime+duration);
+  } catch(e){}
 }
-
 function sfxCorrect() {
-  playTone(523, 'sine', 0.12, 0.25);
-  setTimeout(() => playTone(659, 'sine', 0.12, 0.25), 80);
-  setTimeout(() => playTone(784, 'sine', 0.2, 0.25), 160);
+  playTone(523,'sine',0.12,0.22);
+  setTimeout(()=>playTone(659,'sine',0.12,0.22),80);
+  setTimeout(()=>playTone(784,'sine',0.2,0.22),160);
 }
-
 function sfxWrong() {
-  playTone(220, 'sawtooth', 0.08, 0.2);
-  setTimeout(() => playTone(180, 'sawtooth', 0.15, 0.2), 80);
+  playTone(220,'sawtooth',0.08,0.18);
+  setTimeout(()=>playTone(180,'sawtooth',0.15,0.18),80);
 }
-
-function sfxTimerWarn() {
-  playTone(880, 'square', 0.06, 0.08);
-}
-
+function sfxTimerWarn() { playTone(880,'square',0.06,0.1); }
 function sfxFanfare(stars) {
-  if (stars === 3) {
-    const notes = [523,659,784,1047];
-    notes.forEach((n,i) => setTimeout(() => playTone(n,'sine',0.25,0.3), i*120));
-    setTimeout(() => playTone(1047,'sine',0.5,0.3), notes.length*120);
-  } else if (stars === 2) {
-    const notes = [440,554,659];
-    notes.forEach((n,i) => setTimeout(() => playTone(n,'sine',0.22,0.28), i*110));
-  } else {
-    playTone(330,'sine',0.15,0.2);
-    setTimeout(() => playTone(294,'sine',0.2,0.2), 150);
+  if (stars===3) { [523,659,784,1047].forEach((n,i)=>setTimeout(()=>playTone(n,'sine',0.25,0.28),i*120)); setTimeout(()=>playTone(1047,'sine',0.5,0.28),4*120); }
+  else if (stars===2) { [440,554,659].forEach((n,i)=>setTimeout(()=>playTone(n,'sine',0.22,0.25),i*110)); }
+  else { playTone(330,'sine',0.15,0.18); setTimeout(()=>playTone(294,'sine',0.2,0.18),150); }
+}
+function confirmResetWQ(){
+  if(confirm('Reset the game? / ゲームをリセットしますか？')){
+    clearInterval(timerInterval);
+    clearDrawing();
+    show('screen-title');
   }
 }
-
-// ===== INIT =====
-setupBackground();
-show('screen-title');
 </script>
-
 </body>
 </html>
