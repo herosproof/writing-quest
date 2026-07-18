@@ -332,6 +332,61 @@
   /* ════════════════════════════════
      CANVAS / WRITING AREA
   ════════════════════════════════ */
+  ruby rt { font-size:0.5em; opacity:0.85; }
+
+  /* ── button juice (Word Quest-style tap feedback) ── */
+  .hp-spark {
+    position:fixed; pointer-events:none; z-index:9999; font-size:15px;
+    transform:translate(-50%,-50%);
+    animation:hpSparkUp 0.55s ease-out forwards;
+    text-shadow:0 0 8px rgba(255,220,120,0.9);
+  }
+  @keyframes hpSparkUp {
+    0%   { opacity:1; transform:translate(-50%,-50%) scale(0.6); }
+    100% { opacity:0; transform:translate(-50%,-150%) scale(1.3) rotate(20deg); }
+  }
+  .hp-flash { animation:hpBtnFlash 0.28s ease-out; }
+  @keyframes hpBtnFlash {
+    0%   { filter:brightness(1.65) saturate(1.5); }
+    100% { filter:brightness(1); }
+  }
+
+  .title-diff-label {
+    font-family:'Zen Maru Gothic','Kosugi Maru',sans-serif;
+    font-size:0.9rem; font-weight:700; color:rgba(220,200,240,0.9);
+    text-align:center; margin:6px 0 2px;
+  }
+  .difficulty-grid.mini { gap:8px; margin:4px 0 6px; }
+  .difficulty-grid.mini .difficulty-card { padding:10px 6px; }
+  .difficulty-grid.mini .diff-emoji { font-size:1.6rem; margin-bottom:2px; }
+  .difficulty-grid.mini .diff-desc { font-size:0.62rem; }
+  .difficulty-card { opacity:0.72; transition:transform 0.2s, box-shadow 0.2s, opacity 0.2s, border-color 0.2s; }
+  .difficulty-card.sel {
+    opacity:1; border-color:var(--gold, #d4af37) !important;
+    box-shadow:0 0 18px rgba(212,175,55,0.45), 0 4px 0 rgba(160,120,32,0.4);
+    transform:translateY(-3px);
+  }
+
+  .gallery-grid {
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+    gap:10px; width:100%; max-height:52vh; overflow-y:auto; padding:4px;
+  }
+  .gal-card {
+    background:rgba(255,255,255,0.85); border:2px solid rgba(212,175,55,0.65);
+    border-radius:14px; padding:8px 8px 6px; text-align:center;
+    box-shadow:0 3px 0 rgba(160,120,32,0.35);
+  }
+  .gal-card svg { width:100%; height:64px; display:block; }
+  .gal-card svg polyline { fill:none; stroke:var(--ink); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+  .gal-word { font-weight:800; color:var(--ink); font-size:0.95rem; margin-top:2px; }
+  .gal-date { font-size:0.62rem; opacity:0.55; }
+  .gal-empty { text-align:center; opacity:0.75; padding:26px 8px; font-size:0.95rem; grid-column:1/-1; }
+
+  .bgm-toggle {
+    background:none; border:none; cursor:pointer;
+    font-size:0.95rem; line-height:1; padding:0; flex-shrink:0;
+  }
+
   .canvas-container {
     background: var(--parchment);
     border: 2px solid rgba(201,160,48,0.4);
@@ -515,7 +570,7 @@
 
   <!-- ════ TITLE SCREEN ════ -->
   <div id="screen-title" class="screen active">
-    <a href="https://herosproof.github.io" class="title-header">
+    <a href="https://herosproof.com/" class="title-header">
       <img src="logo.png" alt="Hero's Proof" class="logo-img"
            onload="document.getElementById('wq-fallback').style.display='none';"
            onerror="this.style.display='none';">
@@ -523,19 +578,19 @@
         <span class="title-emblem">✒️</span>
         <div class="logo-wordmark">HERO'S PROOF</div>
       </div>
-      <div class="subtitle">✦ Writing Quest · ライティングクエスト ✦</div>
+      <div class="subtitle">✦ Writing Quest・ライティングクエスト ✦</div>
       <div class="header-divider"></div>
     </a>
 
     <div class="instructions">
       <div class="en">👀 Look at the Japanese word</div>
-      <div class="jp">日本語を見て…</div>
+      <div class="jp"><ruby>日本語<rt>にほんご</rt></ruby>を<ruby>見<rt>み</rt></ruby>て…</div>
       <div class="en">🤷 Click Hint if you need help</div>
-      <div class="jp">困ったらヒントのボタンを押して…</div>
+      <div class="jp"><ruby>困<rt>こま</rt></ruby>ったらヒントのボタンを<ruby>押<rt>お</rt></ruby>して…</div>
       <div class="en">✍️ Write the English word with your pen or finger!</div>
-      <div class="jp">ペンか指で英単語を書こう！</div>
+      <div class="jp">ペンか<ruby>指<rt>ゆび</rt></ruby>で<ruby>英単語<rt>えいたんご</rt></ruby>を<ruby>書<rt>か</rt></ruby>こう！</div>
       <div class="en">📝 Practice spelling and handwriting!</div>
-      <div class="jp">つづりと書き方の練習だよ！</div>
+      <div class="jp">つづりと<ruby>書<rt>か</rt></ruby>き<ruby>方<rt>かた</rt></ruby>の<ruby>練習<rt>れんしゅう</rt></ruby>だよ！</div>
       <div class="en">⏱️ 30 seconds per question</div>
       <div class="jp">1もん30びょうでこたえてね。</div>
       <div class="en">❤️ 3 mistakes = Game Over!</div>
@@ -543,34 +598,28 @@
     </div>
 
     <div class="mode-buttons">
-      <button class="btn" onclick="show('screen-difficulty')">▶ START / スタート</button>
+      <div class="title-diff-label">Choose Difficulty・なんいどを<ruby>選<rt>えら</rt></ruby>ぼう</div>
+      <div class="difficulty-grid mini">
+        <div class="difficulty-card easy sel" id="diffcard-easy" onclick="selDiff('easy')">
+          <div class="diff-emoji">🌱</div>
+          <div class="diff-title">Easy</div>
+          <div class="diff-desc">3〜4 letters・かんたん</div>
+        </div>
+        <div class="difficulty-card medium" id="diffcard-medium" onclick="selDiff('medium')">
+          <div class="diff-emoji">🌟</div>
+          <div class="diff-title">Medium</div>
+          <div class="diff-desc">4〜5 letters・ふつう</div>
+        </div>
+        <div class="difficulty-card hard" id="diffcard-hard" onclick="selDiff('hard')">
+          <div class="diff-emoji">🔥</div>
+          <div class="diff-title">Hard</div>
+          <div class="diff-desc">5〜7 letters・むずかしい</div>
+        </div>
+      </div>
+      <button class="btn" onclick="startGame(selectedDiff)">▶ START・スタート</button>
+      <button class="btn secondary" onclick="openGallery()">🖼️ My Handwriting・わたしの<ruby>字<rt>じ</rt></ruby></button>
     </div>
-    <a href="https://herosproof.github.io" class="btn-hub">🏠 Home / ホーム</a>
-  </div>
-
-  <!-- ════ DIFFICULTY SCREEN ════ -->
-  <div id="screen-difficulty" class="screen">
-    <div class="diff-screen-label">SELECT LEVEL<br>レベルを選ぼう</div>
-
-    <div class="difficulty-grid">
-      <div class="difficulty-card easy" onclick="startGame('easy')">
-        <div class="diff-emoji">🌱</div>
-        <div class="diff-title">Easy</div>
-        <div class="diff-desc">かんたん<br>3〜4 letters</div>
-      </div>
-      <div class="difficulty-card medium" onclick="startGame('medium')">
-        <div class="diff-emoji">🌟</div>
-        <div class="diff-title">Medium</div>
-        <div class="diff-desc">ふつう<br>4〜5 letters</div>
-      </div>
-      <div class="difficulty-card hard" onclick="startGame('hard')">
-        <div class="diff-emoji">🔥</div>
-        <div class="diff-title">Hard</div>
-        <div class="diff-desc">むずかしい<br>5〜7 letters</div>
-      </div>
-    </div>
-
-    <button class="btn secondary" onclick="show('screen-title')">← Back / もどる</button>
+    <a href="https://herosproof.com/" class="btn-hub">🏠 Home・ホームへ</a>
   </div>
 
   <!-- ════ GAME SCREEN ════ -->
@@ -578,7 +627,10 @@
     <div class="top-bar">
       <div class="score-display">💎 <span id="score">0</span></div>
       <div class="timer-num" id="timer-num">30</div>
-      <div class="lives" id="lives">❤️❤️❤️</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="bgm-toggle" id="bgm-btn" onclick="toggleBgm()" title="BGM on/off">🎵</button>
+        <div class="lives" id="lives">❤️❤️❤️</div>
+      </div>
     </div>
 
     <div class="progress-dots" id="progress-dots"></div>
@@ -600,15 +652,15 @@
     </div>
 
     <div class="canvas-buttons">
-      <button class="canvas-btn" onclick="clearDrawing()">🗑️ Clear</button>
-      <button class="canvas-btn" onclick="undoStroke()">↩️ Undo</button>
-      <button class="canvas-btn" onclick="showHint()">💡 Hint</button>
-      <button class="canvas-btn submit" onclick="submitAnswer()">✓ DONE!</button>
+      <button class="canvas-btn" onclick="clearDrawing()">🗑️ Clear・けす</button>
+      <button class="canvas-btn" onclick="undoStroke()">↩️ Undo・もどす</button>
+      <button class="canvas-btn" onclick="showHint()">💡 Hint・ヒント</button>
+      <button class="canvas-btn submit" onclick="submitAnswer()">✓ DONE!・できた！</button>
     </div>
 
     <div class="feedback" id="feedback"></div>
     <div class="reset-row">
-      <button class="reset-btn" onclick="confirmResetWQ()">↺ Reset Game / ゲームをリセット</button>
+      <button class="reset-btn" onclick="confirmResetWQ()">↺ Reset Game・ゲームをリセット</button>
     </div>
   </div>
 
@@ -624,24 +676,49 @@
         <span class="star-icon" id="star3">⭐</span>
       </div>
       <div class="final-score"><span id="final-score">0</span></div>
-      <div class="score-label">points / ポイント</div>
+      <div class="score-label">points・ポイント</div>
     </div>
 
     <div class="result-sub" id="result-sub">Amazing!</div>
 
     <div class="mistakes-list hidden" id="mistakes-list">
-      <div class="mistakes-title">📝 Review / ふりかえり</div>
+      <div class="mistakes-title">📝 Review・ふりかえり</div>
       <div id="mistakes-body"></div>
     </div>
 
     <div class="mode-buttons">
-      <button class="btn" onclick="retryGame()">🔄 Retry / もういちど</button>
-      <a href="https://herosproof.github.io" class="btn secondary" style="text-decoration:none;display:inline-block;padding:14px 28px;text-align:center;">🏠 Home / ホーム</a>
+      <button class="btn" onclick="retryGame()">🔄 Retry・もういちど</button>
+      <button class="btn secondary" onclick="backToTitle()">🏠 Menu・メニューへ</button>
+      <a href="https://herosproof.com/" class="btn secondary" style="text-decoration:none;display:inline-block;padding:14px 28px;text-align:center;">🏠 Home・ホームへ</a>
+    </div>
+  </div>
+
+  <!-- ════ GALLERY SCREEN (idea #3: handwriting keepsakes) ════ -->
+  <div id="screen-gallery" class="screen">
+    <div class="diff-screen-label">MY HANDWRITING<br>わたしの<ruby>字<rt>じ</rt></ruby></div>
+    <div class="gallery-grid" id="gallery-grid"></div>
+    <div class="mode-buttons">
+      <button class="btn secondary" onclick="show('screen-title')">← Back・もどる</button>
+      <button class="reset-btn" onclick="clearGallery()">🗑️ Clear All・ぜんぶけす</button>
     </div>
   </div>
 
 </div><!-- /container -->
 
+<script>
+/* ── ?debug=1 overlay (project convention, ES5-safe) ── */
+window.hpDebugLog=window.hpDebugLog||function(){};
+(function(){
+  if(!/[?&]debug=1/.test(location.search))return;
+  var box=null;
+  function ensure(){if(box)return box;box=document.createElement('div');
+    box.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;background:#7a1f1f;color:#fff;font:11px/1.5 monospace;padding:10px;border-radius:10px;max-height:40vh;overflow:auto;white-space:pre-wrap;';
+    (document.body||document.documentElement).appendChild(box);return box;}
+  window.hpDebugLog=function(m){var b=ensure();b.textContent+=(b.textContent?'\n':'')+m;b.scrollTop=b.scrollHeight;};
+  window.addEventListener('error',function(e){window.hpDebugLog('\u274C '+((e&&e.message)||'error')+' @'+((e&&e.lineno)||'?'));});
+  window.addEventListener('DOMContentLoaded',function(){var b=ensure();if(!b.textContent){b.style.background='#1f5a2a';b.textContent='\u2705 no errors';}});
+})();
+</script>
 <script>
 /* ═══════════════════════════════════════
    STARFIELD — exactly matching v14 sugoroku
@@ -748,6 +825,14 @@ let timer = 30;
 let timerInterval = null;
 let mistakes = [];
 let hintShown = false;
+let selectedDiff = 'easy';
+function selDiff(d) {
+  selectedDiff = d;
+  ['easy','medium','hard'].forEach(k=>{
+    document.getElementById('diffcard-'+k).classList.toggle('sel', k===d);
+  });
+}
+let recoRetryUsed = false;
 let lastDifficulty = 'easy';
 
 let svg, strokesGroup, guideText;
@@ -791,6 +876,7 @@ function startGame(diff) {
   updateLives();
   setupProgressDots();
   show('screen-game');
+  startBgm();
   setTimeout(() => { setupSVG(); loadQuestion(); }, 50);
 }
 
@@ -911,7 +997,9 @@ function endDraw(e) {
   isDrawing = false; currentPath = null;
 }
 
+function clearRecoMarks(){document.querySelectorAll('.reco-mark').forEach(el=>el.remove());}
 function clearDrawing() {
+  clearRecoMarks();
   strokesGroup.innerHTML = ''; paths = [];
   guideText.classList.remove('visible'); hintShown = false;
 }
@@ -923,6 +1011,68 @@ function undoStroke() {
 }
 
 function showHint() { guideText.classList.add('visible'); hintShown = true; }
+
+/* ── HANDWRITING GALLERY (localStorage keepsakes, idea #3) ── */
+const GALLERY_KEY='wq_gallery', GALLERY_MAX=24;
+function loadGallery(){ try{ return JSON.parse(localStorage.getItem(GALLERY_KEY))||[]; }catch(e){ return []; } }
+function saveToGallery(word){
+  try{
+    const strokes=paths.filter(p=>p.points.length>0).map(p=>{
+      const pts=p.points.filter((pt,i)=>i%2===0||i===p.points.length-1);
+      return pts.map(pt=>[Math.round(pt.x),Math.round(pt.y)]);
+    });
+    if(!strokes.length)return;
+    const g=loadGallery();
+    g.unshift({w:word,t:Date.now(),s:strokes});
+    while(g.length>GALLERY_MAX)g.pop();
+    localStorage.setItem(GALLERY_KEY,JSON.stringify(g));
+  }catch(e){ window.hpDebugLog('gallery save failed: '+e); }
+}
+function openGallery(){ renderGallery(); show('screen-gallery'); }
+function renderGallery(){
+  const grid=document.getElementById('gallery-grid');
+  const g=loadGallery();
+  if(!g.length){
+    grid.innerHTML='<div class="gal-empty">Write some words to fill your gallery!<br>ことばを<ruby>書<rt>か</rt></ruby>くと ここにたまるよ！✨</div>';
+    return;
+  }
+  grid.innerHTML=g.map(entry=>{
+    let mnX=1e9,mxX=-1e9,mnY=1e9,mxY=-1e9;
+    entry.s.forEach(st=>st.forEach(p=>{mnX=Math.min(mnX,p[0]);mxX=Math.max(mxX,p[0]);mnY=Math.min(mnY,p[1]);mxY=Math.max(mxY,p[1]);}));
+    const pad=10, vb=(mnX-pad)+' '+(mnY-pad)+' '+((mxX-mnX)+pad*2)+' '+((mxY-mnY)+pad*2);
+    const polys=entry.s.map(st=>'<polyline points="'+st.map(p=>p[0]+','+p[1]).join(' ')+'"/>').join('');
+    const d=new Date(entry.t);
+    return '<div class="gal-card"><svg viewBox="'+vb+'" preserveAspectRatio="xMidYMid meet">'+polys+'</svg>'+
+      '<div class="gal-word">'+entry.w+'</div><div class="gal-date">'+(d.getMonth()+1)+'/'+d.getDate()+'</div></div>';
+  }).join('');
+}
+function clearGallery(){
+  if(confirm('Delete all saved handwriting?・ぜんぶけしますか？')){
+    try{ localStorage.removeItem(GALLERY_KEY); }catch(e){}
+    renderGallery();
+  }
+}
+
+/* ── BGM (same exploria.mp3 as Typing Quest, at repo root) ── */
+let bgmAudio = null, bgmMuted = false;
+function startBgm() {
+  if (!bgmAudio) {
+    bgmAudio = new Audio('exploria.mp3');
+    bgmAudio.loop = true;
+    bgmAudio.volume = 0.25;
+  }
+  bgmAudio.currentTime = 0;
+  bgmAudio.muted = bgmMuted;
+  bgmAudio.play().catch(()=>{});
+}
+function stopBgm() {
+  if (bgmAudio) { bgmAudio.pause(); bgmAudio.currentTime = 0; }
+}
+function toggleBgm() {
+  bgmMuted = !bgmMuted;
+  if (bgmAudio) bgmAudio.muted = bgmMuted;
+  document.getElementById('bgm-btn').textContent = bgmMuted ? '🔇' : '🎵';
+}
 
 /* ═══════════════════════════════════════
    QUESTION LOADING
@@ -941,6 +1091,7 @@ function loadQuestion() {
   document.getElementById('feedback').className = 'feedback';
   updateDot(currentQ,'current');
   hintShown = false;
+  recoRetryUsed = false;
   startTimer();
 }
 
@@ -970,8 +1121,220 @@ function timeUp() {
   setTimeout(nextQuestion, 2000);
 }
 
+/* ═══ LETTER RECOGNITION ENGINE — $P-style point-cloud matching (algorithm
+   after Vatavu, Anthony & Wobbrock 2012), 52 hand-built templates, dual
+   normalization, mirror/cousin comparative rules. 100% local, zero cost.
+   Test suite lives in the dev repo: 95.8%/99.4% letter acc, 300-trial fuzz
+   clean. Tuning knob: see MARGIN comments. ═══ */
+const HPReco=(function(){
+/* ═══ Hero's Proof · letter recognition (inspired by the $P Point-Cloud
+   Recognizer, Vatavu/Anthony/Wobbrock 2012 — algorithm re-implemented from
+   the paper's ideas; stroke-order & direction invariant, rotation-sensitive
+   (we WANT b vs q to differ). All local, zero cost. ═══ */
+const N_PTS = 32;
+
+function pathLen(pts){let d=0;for(let i=1;i<pts.length;i++){d+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);}return d;}
+
+/* strokes: [[ [x,y], ... ], ...] → normalized cloud of N points {x,y,id} */
+function normalize(strokes){
+  // resample: allocate points per stroke proportional to its ink length
+  // (every stroke keeps >=2 pts, exact N total — no truncation of tails)
+  const lens=strokes.map(pathLen);
+  const total=lens.reduce((a,b)=>a+b,0)||1;
+  let alloc=lens.map(l=>Math.max(2,Math.round((N_PTS)*l/total)));
+  /* dot clamp: a tiny-bbox stroke (i/j dot) is a DOT no matter how long its
+     jittery path is — cap it at 4 points so a wiggly dot can't out-vote the
+     stem. (Without this, an honest dotted i loses to dotless l.) */
+  strokes.forEach((st,i)=>{
+    let a=1e9,b=-1e9,c=1e9,d=-1e9;
+    st.forEach(p=>{a=Math.min(a,p[0]);b=Math.max(b,p[0]);c=Math.min(c,p[1]);d=Math.max(d,p[1]);});
+    if((b-a)<14&&(d-c)<14)alloc[i]=Math.min(alloc[i],4);
+  });
+  let sum=alloc.reduce((a,b)=>a+b,0);
+  while(sum>N_PTS){const i=alloc.indexOf(Math.max.apply(null,alloc));alloc[i]--;sum--;}
+  while(sum<N_PTS){const i=alloc.indexOf(Math.max.apply(null,alloc));alloc[i]++;sum++;}
+  const out=[];
+  strokes.forEach((s,si)=>{
+    const n=alloc[si],L=lens[si];
+    if(L===0){for(let k=0;k<n;k++)out.push({x:s[0][0],y:s[0][1],id:si});return;}
+    const step=L/(n-1);
+    out.push({x:s[0][0],y:s[0][1],id:si});
+    let D=0,made=1;
+    for(let i=1;i<s.length&&made<n;i++){
+      let ax=s[i-1][0],ay=s[i-1][1];
+      const bx=s[i][0],by=s[i][1];
+      let d=Math.hypot(bx-ax,by-ay);
+      while(D+d>=step&&d>0&&made<n){
+        const t=(step-D)/d;
+        const qx=ax+t*(bx-ax),qy=ay+t*(by-ay);
+        out.push({x:qx,y:qy,id:si});made++;
+        ax=qx;ay=qy;d=Math.hypot(bx-ax,by-ay);D=0;
+      }
+      D+=d;
+    }
+    while(made<n){out.push({x:s[s.length-1][0],y:s[s.length-1][1],id:si});made++;}
+  });
+  while(out.length<N_PTS)out.push(Object.assign({},out[out.length-1]));
+  const pts=out.slice(0,N_PTS);
+  // DUAL normalization:
+  //  u: uniform scale by max dimension (preserves aspect → distinguishes l/o)
+  //  q: independent x/y scale to unit square (forgives squished/stretched
+  //     handwriting → e stays e when written narrow). Thin shapes (aspect>3)
+  //     skip q — squaring a bare stem is degenerate.
+  let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+  pts.forEach(p=>{minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y);});
+  const w=(maxX-minX)||1,h=(maxY-minY)||1,scale=Math.max(w,h);
+  const thin=(w/h>3||h/w>3);
+  const mk=(fx,fy)=>{
+    const q=pts.map(p=>({x:(p.x-minX)/fx,y:(p.y-minY)/fy,id:p.id}));
+    let cx=0,cy=0;q.forEach(p=>{cx+=p.x;cy+=p.y;});cx/=q.length;cy/=q.length;
+    q.forEach(p=>{p.x-=cx;p.y-=cy;});
+    return q;
+  };
+  return {u:mk(scale,scale), q:thin?null:mk(w,h), thin};
+}
+
+function cloudDist(a,b,start){
+  const n=a.length,matched=new Array(n).fill(false);
+  let sum=0,i=start;
+  do{
+    let best=1e9,idx=-1;
+    for(let k=0;k<n;k++){
+      if(matched[k])continue;
+      const d=Math.hypot(a[i].x-b[k].x,a[i].y-b[k].y);
+      if(d<best){best=d;idx=k;}
+    }
+    matched[idx]=true;
+    const w=1-((i-start+n)%n)/n;
+    sum+=w*best;
+    i=(i+1)%n;
+  }while(i!==start);
+  return sum;
+}
+function pDist(a,b){
+  const step=Math.max(1,Math.floor(Math.sqrt(a.length)));
+  let best=1e9;
+  for(let s=0;s<a.length;s+=step){
+    best=Math.min(best,cloudDist(a,b,s),cloudDist(b,a,s));
+  }
+  return best;
+}
+
+/* templates loaded once */
+const RAW={"a": [[[58, 53], [62, 59], [63, 66], [62, 73], [58, 79], [52, 84], [46, 87], [38, 87], [32, 84], [26, 79], [22, 73], [21, 66], [22, 59], [26, 53], [63, 46], [63, 88]]], "b": [[[32, 10], [32, 88]], [[35, 79], [41, 84], [48, 86], [55, 85], [61, 82], [66, 77], [69, 71], [69, 63], [66, 57], [61, 52], [55, 49], [48, 48], [41, 50], [35, 55]]], "c": [[[67, 84], [60, 88], [52, 89], [44, 88], [37, 84], [32, 78], [29, 70], [29, 62], [32, 54], [37, 48], [44, 44], [52, 43], [60, 44], [67, 48]]], "d": [[[63, 79], [57, 84], [50, 86], [43, 85], [37, 82], [32, 77], [29, 71], [29, 63], [32, 57], [37, 52], [43, 49], [50, 48], [57, 50], [63, 55]], [[68, 10], [68, 88]]], "e": [[[30, 64], [70, 64], [71, 64], [69, 57], [65, 52], [59, 48], [52, 46], [45, 47], [39, 49], [34, 54], [30, 60], [29, 67], [30, 73], [33, 80], [38, 84], [45, 87]]], "f": [[[60, 9], [58, 9], [56, 9], [55, 10], [53, 11], [51, 12], [50, 13], [49, 14], [48, 15], [47, 17], [46, 19], [45, 20], [45, 22], [45, 24], [45, 24], [45, 88]], [[32, 50], [60, 50]]], "g": [[[52, 45], [59, 49], [63, 55], [65, 62], [64, 69], [60, 75], [55, 80], [48, 82], [40, 81], [34, 78], [29, 72], [27, 65], [28, 58], [31, 51], [36, 47], [43, 44]], [[65, 46], [65, 98], [63, 105], [61, 107], [59, 109], [57, 111], [54, 112], [51, 112], [48, 112], [45, 111], [42, 109], [40, 107]]], "h": [[[32, 10], [32, 88]], [[32, 66], [32, 62], [34, 59], [36, 55], [39, 53], [42, 51], [46, 50], [50, 50], [54, 51], [57, 53], [60, 55], [62, 59], [64, 62], [64, 66], [64, 66], [64, 88]]], "i": [[[50, 46], [50, 88]], [[50, 28], [52, 29], [50, 30], [49, 28]]], "j": [[[56, 46], [56, 102], [56, 102], [56, 104], [55, 106], [55, 108], [53, 110], [52, 111], [50, 113], [49, 114], [47, 114], [45, 115], [42, 115], [40, 115], [38, 114], [36, 113]], [[56, 28], [58, 29], [56, 30], [55, 28]]], "k": [[[32, 10], [32, 88]], [[58, 48], [34, 68], [34, 68], [60, 88]]], "l": [[[50, 10], [50, 88]]], "m": [[[26, 88], [26, 48], [26, 60], [26, 57], [27, 55], [29, 53], [31, 51], [33, 50], [36, 49], [38, 49], [41, 50], [43, 51], [45, 53], [47, 55], [48, 57], [48, 60], [48, 60], [48, 88], [48, 88], [48, 62], [48, 60], [48, 57], [49, 55], [51, 53], [53, 51], [55, 50], [58, 49], [60, 49], [63, 50], [65, 51], [67, 53], [69, 55], [70, 57], [70, 60], [70, 60], [70, 88]]], "n": [[[32, 88], [32, 48], [32, 64], [32, 60], [34, 57], [36, 53], [39, 51], [42, 49], [46, 48], [50, 48], [54, 49], [57, 51], [60, 53], [62, 57], [64, 60], [64, 64], [64, 64], [64, 88]]], "o": [[[50, 46], [40, 48], [33, 55], [29, 64], [30, 74], [36, 83], [45, 87], [55, 87], [64, 83], [70, 74], [71, 64], [67, 55], [60, 48], [50, 46]]], "p": [[[32, 46], [32, 112]], [[35, 78], [41, 83], [48, 85], [55, 84], [61, 81], [66, 76], [69, 70], [69, 62], [66, 56], [61, 51], [55, 48], [48, 47], [41, 49], [35, 54]]], "q": [[[61, 78], [55, 83], [48, 85], [41, 84], [35, 81], [30, 76], [27, 70], [27, 62], [30, 56], [35, 51], [41, 48], [48, 47], [55, 49], [61, 54]], [[66, 46], [66, 112]]], "r": [[[36, 46], [36, 88]], [[35, 62], [35, 60], [36, 57], [37, 55], [38, 53], [40, 51], [41, 50], [44, 48], [46, 48], [48, 47], [51, 47], [53, 47], [55, 48], [58, 49]]], "s": [[[63, 51], [53, 46], [42, 49], [37, 57], [43, 64], [57, 68], [63, 76], [57, 83], [45, 85], [34, 79]]], "t": [[[48, 16], [48, 80], [48, 78], [48, 80], [49, 82], [50, 84], [52, 86], [54, 87], [56, 88], [58, 88]], [[32, 44], [66, 44]]], "u": [[[32, 46], [32, 70], [32, 70], [33, 75], [35, 79], [38, 82], [41, 85], [46, 86], [50, 86], [55, 85], [58, 82], [61, 79], [63, 75], [64, 70], [64, 70], [64, 46], [64, 46], [64, 88]]], "v": [[[30, 46], [50, 88], [50, 88], [70, 46]]], "w": [[[26, 46], [38, 88], [38, 88], [50, 52], [50, 52], [62, 88], [62, 88], [74, 46]]], "x": [[[32, 46], [68, 88]], [[68, 46], [32, 88]]], "y": [[[30, 46], [52, 84]], [[72, 46], [40, 115]]], "z": [[[32, 46], [68, 46], [68, 46], [32, 88], [32, 88], [68, 88]]], "A": [[[28, 88], [50, 12]], [[50, 12], [72, 88]], [[37, 60], [63, 60]]], "B": [[[32, 12], [32, 88]], [[32, 12], [50, 12], [50, 12], [54, 13], [58, 15], [61, 18], [63, 23], [63, 27], [61, 32], [58, 35], [54, 37], [50, 38], [50, 38], [33, 38]], [[33, 38], [52, 38], [52, 38], [57, 40], [62, 44], [65, 50], [67, 59], [67, 67], [65, 76], [62, 82], [57, 86], [52, 88], [52, 88], [32, 88]]], "C": [[[77, 77], [67, 85], [54, 88], [41, 86], [30, 80], [21, 70], [17, 57], [17, 43], [21, 30], [30, 20], [41, 14], [54, 12], [67, 15], [77, 23]]], "D": [[[32, 12], [32, 88]], [[32, 12], [46, 12], [46, 12], [53, 13], [59, 16], [65, 22], [69, 28], [72, 37], [74, 45], [74, 55], [72, 63], [69, 72], [65, 78], [59, 84], [53, 87], [46, 88], [46, 88], [32, 88]]], "E": [[[66, 12], [30, 12], [30, 12], [30, 88], [30, 88], [66, 88]], [[30, 50], [58, 50]]], "F": [[[66, 12], [30, 12], [30, 12], [30, 88]], [[30, 50], [58, 50]]], "G": [[[75, 23], [65, 15], [52, 12], [39, 14], [27, 21], [19, 31], [14, 45], [15, 59], [20, 71], [30, 81], [42, 87], [55, 88], [67, 83], [78, 74], [77, 74], [77, 58], [77, 58], [56, 58]]], "H": [[[30, 12], [30, 88]], [[70, 12], [70, 88]], [[30, 50], [70, 50]]], "I": [[[50, 12], [50, 88]], [[36, 12], [64, 12]], [[36, 88], [64, 88]]], "J": [[[60, 12], [60, 72], [60, 72], [60, 75], [59, 77], [58, 80], [56, 82], [53, 84], [51, 85], [48, 86], [45, 86], [43, 86], [40, 85], [38, 83], [36, 81], [34, 79]]], "K": [[[30, 12], [30, 88]], [[68, 12], [32, 52], [32, 52], [70, 88]]], "L": [[[32, 12], [32, 88], [32, 88], [68, 88]]], "M": [[[28, 88], [28, 12], [28, 12], [50, 60], [50, 60], [72, 12], [72, 12], [72, 88]]], "N": [[[30, 88], [30, 12], [30, 12], [70, 88], [70, 88], [70, 12]]], "O": [[[50, 11], [34, 15], [22, 28], [16, 45], [18, 64], [27, 79], [42, 88], [58, 88], [73, 79], [82, 64], [84, 45], [78, 28], [66, 15], [50, 11]]], "P": [[[32, 12], [32, 88]], [[32, 12], [52, 12], [52, 12], [58, 13], [63, 16], [67, 20], [69, 26], [69, 32], [67, 38], [63, 42], [58, 45], [52, 46], [52, 46], [32, 46]]], "Q": [[[50, 11], [35, 15], [23, 27], [17, 44], [19, 61], [28, 76], [42, 84], [58, 84], [72, 76], [81, 61], [83, 44], [77, 27], [65, 15], [50, 11]], [[58, 66], [76, 90]]], "R": [[[32, 12], [32, 88]], [[32, 12], [52, 12], [52, 12], [58, 13], [63, 16], [67, 20], [69, 26], [69, 32], [67, 38], [63, 42], [58, 45], [52, 46], [52, 46], [32, 46]], [[44, 46], [70, 88]]], "S": [[[68, 22], [54, 14], [38, 18], [31, 30], [38, 42], [60, 52], [68, 64], [62, 78], [46, 84], [30, 76]]], "T": [[[28, 12], [72, 12]], [[50, 12], [50, 88]]], "U": [[[30, 12], [30, 66], [30, 66], [31, 72], [33, 77], [37, 81], [42, 84], [47, 86], [53, 86], [58, 84], [63, 81], [67, 77], [69, 72], [70, 66], [70, 66], [70, 12]]], "V": [[[28, 12], [50, 88], [50, 88], [72, 12]]], "W": [[[24, 12], [37, 88], [37, 88], [50, 30], [50, 30], [63, 88], [63, 88], [76, 12]]], "X": [[[30, 12], [70, 88]], [[70, 12], [30, 88]]], "Y": [[[28, 12], [50, 50], [72, 12], [50, 50]], [[50, 50], [50, 88]]], "Z": [[[30, 12], [70, 12], [70, 12], [30, 88], [30, 88], [70, 88]]]};
+const TPL={};
+Object.keys(RAW).forEach(ch=>{TPL[ch]=normalize(RAW[ch]);});
+
+function cloudScore(a,b){
+  let d=pDist(a.u,b.u);
+  if(a.q&&b.q)d=Math.min(d,pDist(a.q,b.q)*1.05); // slight tax keeps aspect info preferred when close
+  return d;
+}
+/* rank all letters for a drawn cluster; returns [{letter,score}] ascending */
+function rankLetter(strokes){
+  const cloud=normalize(strokes);
+  const res=Object.keys(TPL).map(ch=>({letter:ch,score:cloudScore(cloud,TPL[ch])}));
+  res.sort((x,y)=>x.score-y.score);
+  return res;
+}
+
+/* ── segment strokes into letter clusters by x-overlap (union-find), with
+   merge/split repair toward the expected letter count ── */
+function bbox(st){let a=1e9,b=-1e9,c=1e9,d=-1e9;st.forEach(p=>{a=Math.min(a,p[0]);b=Math.max(b,p[0]);c=Math.min(c,p[1]);d=Math.max(d,p[1]);});return{minX:a,maxX:b,minY:c,maxY:d};}
+function overlap(b1,b2){
+  const o=Math.min(b1.maxX,b2.maxX)-Math.max(b1.minX,b2.minX);
+  const w=Math.min(b1.maxX-b1.minX,b2.maxX-b2.minX)||1;
+  return o/Math.max(w,8); // ratio vs the narrower stroke (i-dots are thin)
+}
+function segment(strokes,expected){
+  const boxes=strokes.map(bbox);
+  /* i/j dots (tiny strokes) skip clustering — they attach to the nearest
+     cluster center afterwards, so a drifted dot can't glue two letters
+     together or defect to a neighbor. */
+  const isDot=b=>(b.maxX-b.minX)<14&&(b.maxY-b.minY)<14;
+  const bigIdx=[],dotIdx=[];
+  strokes.forEach((_,i)=>(isDot(boxes[i])?dotIdx:bigIdx).push(i));
+  const par={};bigIdx.forEach(i=>par[i]=i);
+  const find=i=>par[i]===i?i:(par[i]=find(par[i]));
+  for(let a=0;a<bigIdx.length;a++)for(let b=a+1;b<bigIdx.length;b++){
+    const i=bigIdx[a],k=bigIdx[b];
+    if(overlap(boxes[i],boxes[k])>0.30)par[find(i)]=find(k);
+  }
+  const groups={};
+  bigIdx.forEach(i=>{const r=find(i);(groups[r]=groups[r]||[]).push(i);});
+  let clusters=Object.values(groups).map(idx=>({idx,strokes:idx.map(i=>strokes[i])}));
+  if(!clusters.length)return null;
+  clusters.forEach(c=>{c.box=bbox([].concat.apply([],c.strokes));});
+  clusters.sort((a,b)=>(a.box.minX+a.box.maxX)-(b.box.minX+b.box.maxX));
+  dotIdx.forEach(i=>{
+    const cx=(boxes[i].minX+boxes[i].maxX)/2;
+    let bi=0,bd=1e9;
+    clusters.forEach((c,ci)=>{
+      const ccx=(c.box.minX+c.box.maxX)/2;
+      const d=Math.abs(cx-ccx);
+      if(d<bd){bd=d;bi=ci;}
+    });
+    clusters[bi].strokes.push(strokes[i]);
+    clusters[bi].box=bbox([].concat.apply([],clusters[bi].strokes));
+  });
+  // repair: merge closest pair while too many; refuse to split (cursive) — bail instead
+  let guard=strokes.length+2;
+  while(clusters.length>expected&&guard-->0){
+    let bi=-1,bg=1e9;
+    for(let i=0;i<clusters.length-1;i++){
+      const gap=clusters[i+1].box.minX-clusters[i].box.maxX;
+      if(gap<bg){bg=gap;bi=i;}
+    }
+    const m=clusters.splice(bi,2);
+    const merged={strokes:m[0].strokes.concat(m[1].strokes)};
+    merged.box=bbox([].concat.apply([],merged.strokes));
+    clusters.splice(bi,0,merged);
+  }
+  if(clusters.length!==expected)return null; // fewer clusters than letters → connected writing → bail to heuristics
+  return clusters;
+}
+/* per-letter verdict: lenient — target best, within margin, or in top-3 (case-insensitive) */
+function judgeWord(strokes,word){
+  const clusters=segment(strokes,word.length);
+  if(!clusters)return null;
+  const letters=[];
+  for(let i=0;i<word.length;i++){
+    const want=word[i].toLowerCase();
+    const ranked=rankLetter(clusters[i].strokes);
+    const best=ranked[0];
+    const pos=ranked.findIndex(r=>r.letter.toLowerCase()===want);
+    const tScore=pos>=0?ranked[pos].score:1e9;
+    /* margin policy: true letter must score within 1.60x of the best guess
+       (measured gap: honest-messy <=~1.5x, wrong letters >=1.76x).
+       MIRROR RULE: if the best guess is the target's mirror partner
+       (b/d, p/q), the margin tightens to 1.10 — mirror reversal is the
+       classic error this feature exists to catch. */
+    /* COMPARATIVE RULES — a letter must not merely be 'close enough', it
+       must beat its known evil twins:
+       - mirror partners (b/d, p/q): target must score <= mirror x1.05.
+         Catches reversals even when neither ranks first (the classic error
+         this feature exists to flag).
+       - cousins (h/m): target must score <= cousin x1.15 (tolerant — their
+         shapes overlap more honestly). Measured leaks: m-as-h at 1.34-1.43x
+         while honest h stays ~1.0-1.1x. */
+    const MIRROR={b:'d',d:'b',p:'q',q:'p'};
+    const COUSIN={h:'m',m:'h'};
+    const scoreOf=ch=>{const f=ranked.find(r=>r.letter.toLowerCase()===ch);return f?f.score:1e9;};
+    let twinOK=true;
+    if(MIRROR[want])twinOK=twinOK&&tScore<=scoreOf(MIRROR[want])*1.05;
+    if(COUSIN[want])twinOK=twinOK&&tScore<=scoreOf(COUSIN[want])*1.15;
+    const pass=(pos===0||tScore<=best.score*1.60)&&twinOK;
+    letters.push({want,got:best.letter,pass,box:clusters[i].box,score:+tScore.toFixed(3),bestScore:+best.score.toFixed(3)});
+  }
+  return {letters,misses:letters.filter(l=>!l.pass).length};
+}
+
+return {judgeWord:judgeWord};
+})();
+
 /* ═══════════════════════════════════════
-   STROKE VALIDATION (unchanged)
+   STROKE VALIDATION (heuristics — now the FALLBACK layer;
+   HPReco.judgeWord is the primary judge when segmentation succeeds)
 ═══════════════════════════════════════ */
 const STROKE_COUNTS = {
   'a':1,'b':1,'c':1,'d':1,'e':1,'f':2,'g':1,'h':1,'i':2,'j':2,'k':2,'l':1,'m':1,'n':1,'o':1,'p':1,
@@ -1034,10 +1397,12 @@ function analyzeStrokes() {
   const isInWritingZone=centerInZone&&overlapsLines&&(topInZone||bottomInZone);
 
   let coveredSegments=0;
+  const uncoveredSegs=[];
   const segmentWidth=drawingWidth/expectedLetters;
   for (let i=0;i<expectedLetters;i++) {
     const segStart=boundingBox.minX+i*segmentWidth, segEnd=segStart+segmentWidth;
     if (strokeBoundingBoxes.some(bb=>bb.maxX>=segStart&&bb.minX<=segEnd)) coveredSegments++;
+    else uncoveredSegs.push({x0:segStart,x1:segEnd});
   }
 
   const verticalRatio=totalHorizontalMovement>0?totalVerticalMovement/totalHorizontalMovement:0;
@@ -1051,26 +1416,88 @@ function analyzeStrokes() {
   const minHeight=svgHeight*0.18;
 
   return {
-    strokeCount, expectedStrokes, drawingWidth, drawingHeight,
+    strokeCount, expectedStrokes, drawingWidth, drawingHeight, uncoveredSegs,
+    bandY0:boundingBox.minY, bandY1:boundingBox.maxY,
     verticalRatio, strokesWithGoodShape, coverageRatio, isInWritingZone, widthPerLetterRatio,
     checks: {
-      hasEnoughStrokes:   { pass:strokeCount>=minStrokes,            msg:'Write more strokes! / もっと線を書いて！' },
-      hasEnoughWidth:     { pass:drawingWidth>=minWidth,             msg:'Space out your letters! / 文字を広げて！' },
-      hasEnoughHeight:    { pass:drawingHeight>=minHeight,           msg:'Make your letters taller! / もっと大きく書いて！' },
-      hasVerticalMovement:{ pass:verticalRatio>=0.30,                msg:'Letters need up and down strokes! / 上下に線を書いて！' },
-      hasGoodCoverage:    { pass:coverageRatio>=0.80,                msg:'Write all the letters! / 全部の文字を書いて！' },
-      hasGoodStrokes:     { pass:strokesWithGoodShape>=Math.max(Math.ceil(expectedLetters*0.7),3), msg:'Make your strokes clearer! / もっとはっきり書いて！' },
-      isInWritingZone:    { pass:isInWritingZone,                    msg:'Write on the lines! / 線の上に書いて！' },
-      hasCorrectSpacing:  { pass:widthPerLetterRatio>=0.7,           msg:'Write all letters with proper spacing! / 文字の間隔を正しく！' }
+      hasEnoughStrokes:   { pass:strokeCount>=minStrokes,            msg:'Write more strokes!・もっと<ruby>線<rt>せん</rt></ruby>を<ruby>書<rt>か</rt></ruby>いて！' },
+      hasEnoughWidth:     { pass:drawingWidth>=minWidth,             msg:'Space out your letters!・<ruby>文字<rt>もじ</rt></ruby>を<ruby>広<rt>ひろ</rt></ruby>げて！' },
+      hasEnoughHeight:    { pass:drawingHeight>=minHeight,           msg:'Make your letters taller!・もっと<ruby>大<rt>おお</rt></ruby>きく<ruby>書<rt>か</rt></ruby>いて！' },
+      hasVerticalMovement:{ pass:verticalRatio>=0.30,                msg:'Letters need up and down strokes!・<ruby>上下<rt>じょうげ</rt></ruby>に<ruby>線<rt>せん</rt></ruby>を<ruby>書<rt>か</rt></ruby>いて！' },
+      hasGoodCoverage:    { pass:coverageRatio>=0.80,                msg:'Write all the letters!・<ruby>全部<rt>ぜんぶ</rt></ruby>の<ruby>文字<rt>もじ</rt></ruby>を<ruby>書<rt>か</rt></ruby>いて！' },
+      hasGoodStrokes:     { pass:strokesWithGoodShape>=Math.max(Math.ceil(expectedLetters*0.7),3), msg:'Make your strokes clearer!・もっとはっきり<ruby>書<rt>か</rt></ruby>いて！' },
+      isInWritingZone:    { pass:isInWritingZone,                    msg:'Write on the lines!・<ruby>線<rt>せん</rt></ruby>の<ruby>上<rt>うえ</rt></ruby>に<ruby>書<rt>か</rt></ruby>いて！' },
+      hasCorrectSpacing:  { pass:widthPerLetterRatio>=0.7,           msg:'Write all letters with proper spacing!・<ruby>文字<rt>もじ</rt></ruby>の<ruby>間隔<rt>かんかく</rt></ruby>を<ruby>正<rt>ただ</rt></ruby>しく！' }
     },
     expected:expectedLetters, minStrokes
   };
 }
 
 function submitAnswer() {
-  if (paths.length === 0) { showFeedback('✍️ Write something first! / まず何か書いて！', false); return; }
-  clearInterval(timerInterval);
+  if (paths.length === 0) { showFeedback('✍️ Write something first!・まず<ruby>何<rt>なに</rt></ruby>か<ruby>書<rt>か</rt></ruby>いて！', false); return; }
   const q = questions[currentQ];
+  clearRecoMarks();
+
+  /* ── PRIMARY: real letter recognition ── */
+  const strokes = paths.filter(p=>p.points.length>=1).map(p=>p.points.map(pt=>[pt.x,pt.y]));
+  let reco = null;
+  try { reco = HPReco.judgeWord(strokes, q.en); } catch(e){ window.hpDebugLog('reco error: '+e); }
+  if (reco) {
+    reco.letters.forEach((l,i)=>window.hpDebugLog('reco '+(i+1)+': want '+l.want+' got '+l.got+(l.pass?' \u2713':' \u2717')+' ('+l.score+'/'+l.bestScore+')'));
+    if (reco.misses > 0) {
+      /* wobbly circles on the offending letters */
+      reco.letters.forEach(l=>{
+        if (l.pass) return;
+        const el = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+        const padX=(l.box.maxX-l.box.minX)*0.28+10, padY=(l.box.maxY-l.box.minY)*0.22+8;
+        el.setAttribute('cx',(l.box.minX+l.box.maxX)/2);
+        el.setAttribute('cy',(l.box.minY+l.box.maxY)/2);
+        el.setAttribute('rx',(l.box.maxX-l.box.minX)/2+padX);
+        el.setAttribute('ry',(l.box.maxY-l.box.minY)/2+padY);
+        el.setAttribute('fill','none');
+        el.setAttribute('stroke','#e8a33d');
+        el.setAttribute('stroke-width','4');
+        el.setAttribute('stroke-dasharray','14 7');
+        el.setAttribute('stroke-linecap','round');
+        el.setAttribute('transform','rotate(-4 '+(l.box.minX+l.box.maxX)/2+' '+(l.box.minY+l.box.maxY)/2+')');
+        el.classList.add('reco-mark');
+        svg.appendChild(el);
+      });
+      const first = reco.letters.find(l=>!l.pass);
+      const idx = reco.letters.indexOf(first)+1;
+      const hint = 'Letter '+idx+' looks like \u201C'+first.got+'\u201D \u2014 we need \u201C'+first.want+'\u201D!\u30FB'+idx+'\u3070\u3093\u3081\u306E<ruby>\u6587\u5B57<rt>\u3082\u3058</rt></ruby>\u3092\u307F\u3066\uFF01\u300C'+first.want+'\u300D\u3092<ruby>\u66F8<rt>\u304B</rt></ruby>\u3053\u3046\uFF01';
+      if (!recoRetryUsed) {
+        recoRetryUsed = true;
+        sfxWrong();
+        showFeedback('\u270F\uFE0F ' + hint + ' (free try!\u30FB\u3082\u3046\u3044\u3061\u3069\uFF01)', false);
+        return; /* timer keeps running, no life lost — fix and resubmit */
+      }
+      clearInterval(timerInterval);
+      sfxWrong();
+      showFeedback('\u274C ' + q.en + ' \u2014 ' + hint, false);
+      recordMistake(); loseLife();
+      updateDot(currentQ,'wrong-dot');
+      setTimeout(nextQuestion, 2500);
+      return;
+    }
+    /* all letters recognized — accept regardless of heuristic nitpicks */
+    clearInterval(timerInterval);
+    let pts = Math.max(10, Math.floor(timer/TIME_PER_Q*100));
+    if (!hintShown) pts += 20;
+    score += pts;
+    document.getElementById('score').textContent = score;
+    sfxCorrect();
+    saveToGallery(q.en);
+    showFeedback('\u2705 Correct!\u30FB<ruby>\u6B63\u89E3<rt>\u305B\u3044\u304B\u3044</rt></ruby>\uFF01 +' + pts + ' pts', true);
+    spawnParticles(svg, ['\u2B50','\u2728','\uD83D\uDC8E','\u2726']);
+    updateDot(currentQ,'done');
+    setTimeout(nextQuestion, 1500);
+    return;
+  }
+  window.hpDebugLog('reco: bailed (connected writing?) \u2192 heuristics');
+
+  /* ── FALLBACK: plausibility heuristics (connected/cursive writing) ── */
+  clearInterval(timerInterval);
   const analysis = analyzeStrokes();
   const allChecks = Object.values(analysis.checks);
   const failedChecks = allChecks.filter(c => !c.pass);
@@ -1082,13 +1509,30 @@ function submitAnswer() {
     score += pts;
     document.getElementById('score').textContent = score;
     sfxCorrect();
-    showFeedback('✅ Correct! / 正解！ +' + pts + ' pts', true);
+    saveToGallery(q.en);
+    showFeedback('✅ Correct!・<ruby>正解<rt>せいかい</rt></ruby>！ +' + pts + ' pts', true);
     spawnParticles(svg, ['⭐','✨','💎','✦']);
     updateDot(currentQ,'done');
     setTimeout(nextQuestion, 1500);
   } else {
     sfxWrong();
-    const hint = failedChecks[0].msg;
+    /* Lumi circles the empty spot where letters are missing (idea #2) */
+    if (analysis.uncoveredSegs.length > 0) {
+      const cy=(analysis.bandY0+analysis.bandY1)/2;
+      const ry=Math.max((analysis.bandY1-analysis.bandY0)/2+12, 26);
+      analysis.uncoveredSegs.slice(0,3).forEach(sg=>{
+        const el=document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+        el.setAttribute('cx',(sg.x0+sg.x1)/2); el.setAttribute('cy',cy);
+        el.setAttribute('rx',(sg.x1-sg.x0)/2+8); el.setAttribute('ry',ry);
+        el.setAttribute('fill','none'); el.setAttribute('stroke','#e8a33d');
+        el.setAttribute('stroke-width','4'); el.setAttribute('stroke-dasharray','14 7');
+        el.setAttribute('stroke-linecap','round');
+        el.setAttribute('transform','rotate(3 '+(sg.x0+sg.x1)/2+' '+cy+')');
+        el.classList.add('reco-mark');
+        svg.appendChild(el);
+      });
+    }
+    const hint = failedChecks[0].msg + (analysis.uncoveredSegs.length>0 ? ' (ここ！ 👀)' : '');
     showFeedback('❌ ' + q.en + ' — ' + hint, false);
     recordMistake(); loseLife();
     updateDot(currentQ,'wrong-dot');
@@ -1112,7 +1556,7 @@ function nextQuestion() {
 
 function showFeedback(msg, ok) {
   const el = document.getElementById('feedback');
-  el.textContent = msg;
+  el.innerHTML = msg;
   el.className = 'feedback ' + (ok ? 'ok' : 'bad');
 }
 
@@ -1135,6 +1579,7 @@ function spawnParticles(el, symbols) {
 ═══════════════════════════════════════ */
 function endGame() {
   clearInterval(timerInterval);
+  stopBgm();
   show('screen-result');
   for (let i=1;i<=3;i++) document.getElementById(`star${i}`).classList.remove('lit');
   const maxScore = questions.length * 120;
@@ -1145,21 +1590,21 @@ function endGame() {
   if (pct >= 0.6 || score >= questions.length*80) {
     stars=3; emoji='🏆'; cls='great';
     title="HERO'S PROOF!\nかんぺき！";
-    sub="Amazing! You're a writing hero! / すごい！ライティングヒーロー！";
+    sub="Amazing! You're a writing hero!・すごい！ライティングヒーロー！";
   } else if (pct >= 0.35 || score >= questions.length*40) {
     stars=2; emoji='⚔️'; cls='good';
     title="WELL DONE!\nよくできました！";
-    sub="Great effort! Keep practicing! / がんばったね！もっと練習しよう！";
+    sub="Great effort! Keep practicing!・がんばったね！もっと練習しよう！";
   } else {
     stars=1; emoji='💪'; cls='try';
     title="TRY AGAIN!\nもういちど！";
-    sub="Don't give up! / あきらめないで！できるよ！";
+    sub="Don't give up!・あきらめないで！できるよ！";
   }
 
   document.getElementById('result-emoji').textContent = emoji;
   const tEl = document.getElementById('result-title');
   tEl.textContent = title; tEl.className = 'result-title ' + cls;
-  document.getElementById('result-sub').textContent = sub;
+  document.getElementById('result-sub').innerHTML = sub;
 
   sfxFanfare(stars);
   setTimeout(() => {
@@ -1183,6 +1628,10 @@ function endGame() {
   }
 }
 
+function backToTitle() {
+  document.getElementById('mistakes-list').classList.add('hidden');
+  show('screen-title');
+}
 function retryGame() {
   document.getElementById('mistakes-list').classList.add('hidden');
   startGame(lastDifficulty);
@@ -1219,12 +1668,33 @@ function sfxFanfare(stars) {
   else { playTone(330,'sine',0.15,0.18); setTimeout(()=>playTone(294,'sine',0.2,0.18),150); }
 }
 function confirmResetWQ(){
-  if(confirm('Reset the game? / ゲームをリセットしますか？')){
+  if(confirm('Reset the game?・ゲームをリセットしますか？')){
     clearInterval(timerInterval);
+    stopBgm();
     clearDrawing();
     show('screen-title');
   }
 }
+
+
+/* ── button juice: tap tone + sparkle + flash on every button (ES5-safe) ── */
+(function(){
+  var SEL='button, .btn, .btn-hub, .btn-start, .btn-play-again, .difficulty-card, .mode-card, .canvas-btn, .reset-btn';
+  var GLYPHS=['\u2728','\u2B50','\u2726','\uD83D\uDCAB'];
+  document.addEventListener('pointerdown',function(e){
+    var t=e.target&&e.target.closest?e.target.closest(SEL):null;
+    if(!t)return;
+    try{ if(typeof playTone==='function') playTone(600+Math.random()*180,'sine',0.05,0.15); }catch(err){}
+    t.classList.remove('hp-flash'); void t.offsetWidth; t.classList.add('hp-flash');
+    var s=document.createElement('span');
+    s.className='hp-spark';
+    s.textContent=GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
+    s.style.left=(e.clientX||0)+'px';
+    s.style.top=(e.clientY||0)+'px';
+    document.body.appendChild(s);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); },600);
+  },{passive:true});
+})();
 </script>
 </body>
 </html>
