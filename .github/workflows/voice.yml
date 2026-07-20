@@ -1,0 +1,84 @@
+name: Generate Writing Quest voice
+# "Run workflow" button in the Actions tab.
+# Requires at repo root: gen_voice.py + wr_voice_manifest.csv
+# Requires repository secret: ELEVEN_API_KEY
+# If your repo names differ, edit REUSE_REPOS below (space-separated, may be empty).
+
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Which clips to generate"
+        default: "word"
+        type: choice
+        options:
+          - word
+          - all
+      voice_id:
+        description: "ElevenLabs voice ID (Lumi)"
+        default: "qr4tGyu3wbMafzv0aIuL"
+        required: true
+        type: string
+      model:
+        description: "Quality (multilingual = best; Creator plan has plenty of credits)"
+        default: "eleven_multilingual_v2"
+        type: choice
+        options:
+          - eleven_multilingual_v2
+          - eleven_turbo_v2_5
+
+permissions:
+  contents: write
+
+env:
+  REUSE_REPOS: "speaking-quest word-quest typing-quest"
+  MANIFEST: "wr_voice_manifest.csv"
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependency
+        run: pip install requests
+
+      - name: Reuse matching clips from sibling repos (no re-billing)
+        run: |
+          for repo in $REUSE_REPOS; do
+            git clone --depth 1 "https://github.com/${{ github.repository_owner }}/$repo" "/tmp/$repo" 2>/dev/null || continue
+            tail -n +2 "$MANIFEST" | cut -d, -f1 | while IFS= read -r f; do
+              base=$(basename "$f")
+              if [ ! -f "$f" ] && [ -f "/tmp/$repo/voice/$base" ]; then
+                mkdir -p "$(dirname "$f")"
+                cp "/tmp/$repo/voice/$base" "$f"
+                echo "♻️ reused $base from $repo"
+              fi
+            done
+          done
+
+      - name: Generate missing clips
+        env:
+          ELEVEN_API_KEY: ${{ secrets.ELEVEN_API_KEY }}
+          ELEVEN_VOICE_ID: ${{ inputs.voice_id }}
+          ELEVEN_MODEL: ${{ inputs.model }}
+          VOICE_MANIFEST: "wr_voice_manifest.csv"
+        run: |
+          if [ "${{ inputs.only }}" = "all" ]; then
+            python gen_voice.py
+          else
+            python gen_voice.py --only "${{ inputs.only }}"
+          fi
+
+      - name: Commit new audio (even if some clips were skipped)
+        if: always()
+        run: |
+          git config user.name "hp-voice-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add voice/
+          git diff --cached --quiet || git commit -m "🔊 Add generated voice clips (${{ inputs.only }})"
+          git push
