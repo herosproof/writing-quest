@@ -638,6 +638,7 @@
     <div class="question-area">
       <div class="jp-hint" id="jp-hint">りんご</div>
       <div class="hint-emoji" id="hint-emoji">🍎</div>
+      <button class="canvas-btn" id="word-audio-btn" onclick="speakWord()" title="Listen・きく" style="padding:6px 14px;font-size:1.1rem;">🔊 きく</button>
       <div class="category-badge" id="category">FOOD</div>
     </div>
 
@@ -1010,7 +1011,7 @@ function undoStroke() {
   if (removed.element && removed.element.parentNode) removed.element.parentNode.removeChild(removed.element);
 }
 
-function showHint() { guideText.classList.add('visible'); hintShown = true; }
+function showHint() { guideText.classList.add('visible'); if(!hintShown)speakWord(); hintShown = true; }
 
 /* ── HANDWRITING GALLERY (localStorage keepsakes, idea #3) ── */
 const GALLERY_KEY='wq_gallery', GALLERY_MAX=24;
@@ -1051,6 +1052,30 @@ function clearGallery(){
     try{ localStorage.removeItem(GALLERY_KEY); }catch(e){}
     renderGallery();
   }
+}
+
+/* ── Word voice: real file first (voice/word_<slug>.mp3), TTS fallback ── */
+const VOICE_DEBUG=/[?&]debug=1/.test(location.search);
+function wslug(w){return String(w).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');}
+function ttsWord(word){
+  if(!('speechSynthesis' in window))return;
+  if(VOICE_DEBUG)console.log('[voice] TTS fallback:',word);
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(word);
+  u.lang='en-US';u.rate=0.88;u.pitch=1;u.volume=0.9;
+  window.speechSynthesis.speak(u);
+}
+function speakWord(){
+  const q=questions[currentQ];
+  if(!q)return;
+  let fell=false;const fall=()=>{if(fell)return;fell=true;ttsWord(q.en);};
+  try{
+    const a=new Audio('voice/word_'+wslug(q.en)+'.mp3');
+    a.volume=0.9;
+    a.onplay=()=>{if(VOICE_DEBUG)console.log('[voice] file:',a.src);};
+    a.onerror=fall;
+    a.play().catch(fall);
+  }catch(e){fall();}
 }
 
 /* ── BGM (same exploria.mp3 as Typing Quest, at repo root) ── */
@@ -1487,6 +1512,7 @@ function submitAnswer() {
     score += pts;
     document.getElementById('score').textContent = score;
     sfxCorrect();
+    speakWord();
     saveToGallery(q.en);
     showFeedback('\u2705 Correct!\u30FB<ruby>\u6B63\u89E3<rt>\u305B\u3044\u304B\u3044</rt></ruby>\uFF01 +' + pts + ' pts', true);
     spawnParticles(svg, ['\u2B50','\u2728','\uD83D\uDC8E','\u2726']);
@@ -1509,6 +1535,7 @@ function submitAnswer() {
     score += pts;
     document.getElementById('score').textContent = score;
     sfxCorrect();
+    speakWord();
     saveToGallery(q.en);
     showFeedback('✅ Correct!・<ruby>正解<rt>せいかい</rt></ruby>！ +' + pts + ' pts', true);
     spawnParticles(svg, ['⭐','✨','💎','✦']);
